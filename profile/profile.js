@@ -3,7 +3,7 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
 const pool = require('./database.js');
-const port = 80;
+const port = 5000;
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
 const {signUp} = require('./signup.js');

@@ -8,20 +8,40 @@ const secretKey = `${process.env.JWT_SECRET_KEY}`;
 const app = express();
 app.use(express.json());
 
+
+const verifyToken = async (req, res) => {
+    // authorization
+    const header = req.headers.authorization;
+    const token = header.split(' ')[1];
+    if(!token) 
+        return res.status(401).json({ error: 'No Token!'});
+
+    jwt.verify(token, secretKey, async (err, user) => {
+        if(err)
+            return res.status(403).json({ error: 'Invalid Token'});
+    });
+}
+
+
 /** Friend Pending
  *  所有pending status的交友邀請
  */
-app.get('/api/1.0/friends/pending', async (req, res) => {
+async function getPendingFriends(req, res) {
+
     // authorization
     const header = req.headers.authorization;
     const token = header.split(' ')[1];
     if (!token) return res.status(401).json({ error: 'No Token!' });
     
     try {
-        const user = jwt.verify(token, secretKey); 
-        const userId = user.id;
-        console.log(userId);
-        
+        let userId;
+        try {
+            const user = jwt.verify(token, secretKey); 
+            userId = user.id;
+            console.log(userId);
+        } catch (error) {
+            return res.status(403).json({ error: 'Invalid Token'});
+        }
     
         const sql = 'SELECT * FROM users JOIN friendship ON users.id = friendship.user1_id WHERE friendship.user2_id = ? AND friendship.status = ?';
         // const query = 'SELECT * FROM friendship WHERE user1_id = ? AND status = ?';
@@ -53,13 +73,11 @@ app.get('/api/1.0/friends/pending', async (req, res) => {
         console.error('Error: ', err);
         return res.status(500).json({ error: 'Server Error'});
     }
-
-});
-
+}
 
 
-function getFriendsData(id, friendship_id){
-    const query = 'SELECT name, picture, friendship WHERE id = ?';
+function getUserData(id, friendship_id){
+    const query = 'SELECT * friendship WHERE id = ?';
     pool.query(query, id, (err, user) => {
         if(err)
             return res.status(500).json({ error: 'Server Error!'});
@@ -67,6 +85,6 @@ function getFriendsData(id, friendship_id){
     });
 }
 
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+module.exports = {
+    getPendingFriends
+}

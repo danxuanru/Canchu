@@ -3,7 +3,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('./database.js');
-const port = 80;
 
 const app = express();
 app.use(express.json()); // use middleware json
