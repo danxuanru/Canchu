@@ -8,7 +8,7 @@ const app = express();
 app.use(express.json()); // use middleware json
 
 /* signup route */
-function signUp(req, res) {
+async function signUp(req, res) {
 
     const {name, email, password} = req.body;
 
@@ -27,14 +27,10 @@ function signUp(req, res) {
     }
     
     // check email exists or not
-    pool.query('SELECT * FROM users WHERE email = ?', [email], async (error, results) =>{
-        if(error){ // server error
-            console.error(error);
-            return res.status(500).json({ error: 'Server Error Response' });
-        }
-        if(results.length > 0) // email exists
+    try {
+        const results = await pool.query('SELECT * FROM users WHERE email = ?', [email]);
+        if(results[0].length > 0) // email exists
             return res.status(403).json({ error: 'Email Already Exists' });
-
 
         // hash password
         const hashPassword = await bcrypt.hash(password, 10);
@@ -44,44 +40,44 @@ function signUp(req, res) {
             email,
             password: hashPassword
         }
-        
+
         // insert new user into database
-        pool.query('INSERT INTO users SET ?', insertData, (error, result) => {
-            if(error){
-                console.error(error);
-                return res.status(500).json({ error: 'Server Error Response' });
-            }
+        const result = await pool.query('INSERT INTO users SET ?', insertData);
 
-            // generate and sign the JWT token
-            /**
-             *  .sign() payload, secret key
-             */
-            const userId = result.insertId;
-           
-            const payload = {
-                id: userId, 
-                name, 
-                email
-            };
-            const token = jwt.sign(payload, `${process.env.JWT_SECRET_KEY}`);
 
-            // prepare the response object (result.insertId is build-in)
-            const data = { 
-                id: userId,
-                provider: 'native', 
-                name, 
-                email, 
-                picture: "https://schoolvoyage.ga/images/123498.png"
-            };
+        // generate and sign the JWT token
+        /**
+         *  .sign() payload, secret key
+         */
+        const userId = result.insertId;
+        
+        const payload = {
+            id: userId, 
+            name, 
+            email
+        };
+        const token = jwt.sign(payload, `${process.env.JWT_SECRET_KEY}`);
 
-            const response = {
-                access_token: token
-                , data
-            };
+        // prepare the response object (result.insertId is build-in)
+        const user = { 
+            id: userId,
+            provider: 'native', 
+            name, 
+            email, 
+            picture: "https://schoolvoyage.ga/images/123498.png"
+        };
 
-            return res.json(response);
-        });
-    });
+        const response = {
+            access_token: token
+            , user
+        };
+
+        return res.json({data: response});
+
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ error: 'Server Error Response' });
+    }
 }
 
 function validateEmail(email){

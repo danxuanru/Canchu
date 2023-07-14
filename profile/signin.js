@@ -3,7 +3,6 @@ const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('./database.js');
-const DBport = process.env.DB_PORT;
 
 
 const app = express();
@@ -19,7 +18,6 @@ async function signIn(req, res) {
             return res.status(400).json({ error: 'Invalid content type. Only application/json is accepted.' });
         }
         
-
         if (provider === 'native') {
             // data missing
             if(!email | !password) 
@@ -28,33 +26,33 @@ async function signIn(req, res) {
             // check email, password is already exists in database
             // const userData = await pool.query('SELECT * FROM users WHERE email = ? AND password = ?', [email, password]);
             
-            pool.query('SELECT * FROM users WHERE email = ?', email, async (error, results) => {
+            const results = await pool.query('SELECT * FROM users WHERE email = ?', email);
 
-                if(results.length === 0)
-                    return res.status(403).json({ error: 'Email Does Not Found!'});
+            if(results.length === 0)
+                return res.status(403).json({ error: 'Email Does Not Found!'});
 
-                // password authentication
-                const userData = results[0];
+            // password authentication
+            const userData = results[0][0];
+            console.log(userData);
 
-                const passwordMatch = await bcrypt.compare(password, userData.password);
+            const passwordMatch = await bcrypt.compare(password, userData.password);
                     
-                if(!passwordMatch)
-                    return res.status(403).json({ error: 'Incorrect Password'});
+            if(!passwordMatch)
+                return res.status(403).json({ error: 'Incorrect Password'});
             
 
-                const token = jwt.sign({id: userData.id, name: userData, email: userData.email}, `${process.env.JWT_SECRET_KEY}`);
+            const token = jwt.sign({id: userData.id, name: userData, email: userData.email}, `${process.env.JWT_SECRET_KEY}`);
                 
                 // response
-                const data = {
-                    id: userData.id,
-                    provier: userData.provider,
-                    name: userData.name,
-                    email: userData.email,  
-                    picture: userData.picture
-                }
-                return res.json({access_token: token, data});
+            const user = {
+                id: userData.id,
+                provider: userData.provider,
+                name: userData.name,
+                email: userData.email,  
+                picture: userData.picture
+            }
+            return res.json({data: {access_token: token, user}});
 
-            });
         // } else if (provier === 'facebook') {
         //     // access_token missing 
         //     if (!access_token) {
