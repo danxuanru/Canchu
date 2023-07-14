@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
-const port = 80;
+const port = 5000;
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
 const { getPendingFriends } = require('./friendPending.js');
@@ -43,8 +43,8 @@ app.post('/api/1.0/friends/:user_id/request', async (req, res) =>{
         const searchQuery = 'SELECT * FROM friendship WHERE user1_id = ? AND user2_id = ?';
         const results = await pool.query(searchQuery, [userId, inviteeId]); 
         if(results[0].length > 0) {
-            console.log(results[0]);
-            return res.json({message: results[0]});  
+            // console.log(results[0]);
+            return res.status(400).json({error: 'Already Request!'});  
         }
 
         // add to friendship table & get friendship ID
