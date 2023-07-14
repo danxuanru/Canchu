@@ -37,7 +37,7 @@ app.get('/api/1.0/users/:id/profile', authenticateToken, async (req, res) => {
                 return res.status(400).json({ error: 'User not found'});
             
         const userData = results[0][0];
-        console.log(userData);
+        // console.log(userData);
         const friendship = JSON.parse(userData.friendship);
         // console.log(friendship);
 
@@ -101,13 +101,16 @@ app.put('/api/1.0/users/picture', upload.single('picture'), authenticateToken, a
     //console.log(imgURL);
         
     // insert data to database
-    pool.query('UPDATE users SET picture = ?', [imgURL], (error, results,fields) => {
-        if(error) {
-            console.error('Insert into users failed: ', error);
-            return res.status(500).json({ error: 'Server Error!'});
-        }
+    try {
+        await pool.query('UPDATE users SET picture = ?', [imgURL]);
+        console.log(imgURL);
         return res.json({data: {picture: imgURL}});
-    });
+        
+
+    } catch (error){
+        console.error('Insert into users failed: ', error);
+        return res.status(500).json({ error: 'Server Error!'});
+    }
 });
 
 
@@ -130,7 +133,7 @@ app.put('/api/1.0/users/profile', authenticateToken, async (req,res) => {
         const user = jwt.verify(token, secretKey);
 
         const results = await pool.query('SELECT * FROM users WHERE id = ?', [user.id]);
-        console.log(results);
+        // console.log(results);
         if(results[0].length === 0)
             return res.status(403).json({ error: 'User Not Found!'});
 
