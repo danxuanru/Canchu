@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
+const timeout = require('connect-timeout');
 const pool = require('./database.js');
 const port = 5000;
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
@@ -12,6 +13,7 @@ const { authenticateToken } = require('./token.js');
 
 const app = express();
 app.use(express.json());
+app.use(timeout('30s'));
 
 app.post('/api/1.0/users/signup', signUp);
 app.post('/api/1.0/users/signin', signIn);
