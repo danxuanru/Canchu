@@ -62,7 +62,7 @@ app.post('/api/1.0/friends/:user_id/request', async (req, res) =>{
         return res.json({data: {friendship: friendshipData  }});
 
     } catch (error) {
-        console.error('SELECT error: ', err);
+        console.error('SELECT error: ', error);
         return res.status(500).json({ error: 'Server Error'});
     }
                 
