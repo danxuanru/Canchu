@@ -129,7 +129,7 @@ async function agreeFriend (req, res) {
     const select = 'SELECT user2_id, status FROM friendship WHERE id = ?';
     const results = await pool.query(select, [friendship_id]);
     
-    // console.log(results[0][0]);
+    console.log(results[0][0]);
     const user2_id = results[0][0].user2_id;
     const status = results[0][0].status;
 
