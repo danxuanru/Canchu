@@ -28,7 +28,14 @@ async function readEvents(req, res){
 
         // add new event: is_read = ture
         // 時間形態處理
-        const time;
+        let date = new Date();
+        let year = String(date.getFullYear());
+        let month = String(date.getMonth()+1);
+        let day = String(date.getDate());
+        let hours = String(date.getHours());
+        let minutes = String(date.getMinutes());
+        let seconds = String(date.getSeconds());
+        const time = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 
         const insert = 'INSERT INTO events (type, is_read, image, created_at, summary) VALUE (?,?,?,?,?)';
         await pool.query(insert, [data.type, true, data.image, time, data.summary]);
