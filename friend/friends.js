@@ -129,15 +129,17 @@ async function agreeFriend (req, res) {
     const select = 'SELECT user2_id, status FROM friendship WHERE id = ?';
     const results = await pool.query(select, [friendship_id]);
     
-    console.log(results);
+    // console.log(results);
     const user2_id = results[0][0].user2_id;
     const status = results[0][0].status;
+
+    // add a restrict , if friendship_id out of the range
 
     if(status === 'accepted' )
         return res.status(400).json({error: 'You Have Agreed This Request!'});
 
     const user = jwt.verify(token, secretKey);
-    console.log(user);
+    // console.log(user);
     // const userId = res.locals.id;
     // console.log(user.id);
     // console.log(user2_id);
