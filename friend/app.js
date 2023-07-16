@@ -9,7 +9,7 @@ const {signIn} = require('./signin.js');
 const { getProfile, updatePicture, updateProfile } = require('./profile.js');
 const { authenticateToken } = require('./token.js');
 
-const { requestFriend, getPendingFriends } = require('./friends.js');
+const { requestFriend, getPendingFriends, agreeFriend, deleteFriend } = require('./friends.js');
 
 const app = express();
 app.use(express.json());
@@ -37,6 +37,8 @@ app.put('/api/1.0/users/picture', upload.single('picture'), authenticateToken, u
 
 app.get('/api/1.0/friends/pending', authenticateToken, getPendingFriends);
 app.post('/api/1.0/friends/:user_id/request', authenticateToken, requestFriend);
+app.post('/api/1.0/friends/:friendship_id/agree', authenticateToken, agreeFriend);
+app.delete('/api/1.0/friends/:friendship_id', authenticateToken, deleteFriend);
 
 
 app.listen(port, () => {
