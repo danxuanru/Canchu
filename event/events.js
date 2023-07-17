@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { addReadEvent } = require('./model.js');
+// const { addReadEvent } = require('./model.js');
 
 async function getEvents(req, res) {
 
@@ -56,7 +56,10 @@ async function readEvent(req, res){
         // }
 
         // read event
-        addReadEvent(eventsId);
+        // addReadEvent(eventsId);
+
+        // read event: update is_read = true
+        await pool.query('UPDATE events SET is_read = ?', [true]);
         
         return res.json({ data: {events: {id: eventsId}}});
 
