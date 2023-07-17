@@ -2,7 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
 const multer = require('multer');
-const port = 5000;
+const port = 80;
 
 const {signUp} = require('./signup.js');
 const {signIn} = require('./signin.js');

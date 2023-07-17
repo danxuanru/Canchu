@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
+const { addNewEvent } = require('./model.js');
+
 const app = express();
 app.use(express.json());
 
@@ -56,19 +58,9 @@ async function requestFriend (req, res){
         const friendship = await pool.query(query, [userId, inviteeId, 'pending']); 
 
         const friendship_id = friendship[0].insertId;
-        // console.log(friendship[0]);
-        // console.log(friendship_id);
 
         // add event (select user profile + insert into events)
-        const profile = 'SELECT name, picture FROM users WHERE id = ?';
-        const user = await pool.query(profile, [userId]);
-        const summary = `${user[0][0].name}邀請你成為好友`;
-        const image = user[0][0].picture;
-        const date = getDateFormat();
-
-        const insertEvent = `INSERT INTO events (type, is_read, image, summary, user_id, created_at) VALUE (?,?,?,?,?,?)`;
-        await pool.query(insertEvent, ['friend_request', false, image, summary, inviteeId, date]);
-
+        addNewEvent('friend_request', userId, inviteeId);
 
         const friendshipData = {
             id: friendship_id,
@@ -149,10 +141,11 @@ async function agreeFriend (req, res) {
     // 用這種存法 回傳的是object 即使使用JSON.stringify()也後會有error
     
     // status = pending & check user.id is user2_id
-    const select = 'SELECT user2_id, status FROM friendship WHERE id = ?';
+    const select = 'SELECT user1_id, user2_id, status FROM friendship WHERE id = ?';
     const results = await pool.query(select, [friendship_id]);
     
     // console.log(results);
+    const user1_id = results[0][0].user1_id;
     const user2_id = results[0][0].user2_id;
     const status = results[0][0].status;
 
@@ -173,6 +166,9 @@ async function agreeFriend (req, res) {
     // update friendship.status = pending
     const update = 'UPDATE friendship SET status = ? WHERE id = ?';
     await pool.query(update, ["accepted", friendship_id]);
+
+    // add new event
+    addNewEvent('agree_request', user2_id, user1_id);
 
     // response 
     res.json({data: {friendship: {id: friendship_id} } });
@@ -199,6 +195,11 @@ async function deleteFriend (req, res) {
     // update friendship.status = pending
     const deleteFriendship = 'DELETE from friendship WHERE id = ?';
     await pool.query(deleteFriendship, [friendship_id]);
+
+    // add new event
+    const user_id = user.id === user1_id ? user1_id : user2_id;
+    const receiver_id = user_id === user1_id ? user2_id : user1_id;
+    addNewEvent('delete_friend', user_id, receiver_id);
 
     res.json({data: {friendship: {id: friendship_id} } });
 }
