@@ -7,3 +7,7 @@
     ```sql
     SELECT * FROM users WHERE name LIKE '%${keyword}%'
     ```
+
+* **getFriendship** (model)
+    > 獲取user與自己的`friedship object`
+    

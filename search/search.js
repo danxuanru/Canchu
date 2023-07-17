@@ -1,44 +1,45 @@
 require('dotenv').config();
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
-const port = 80;
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { authenticateToken } = require('./token.js');
+const { getFriendship } = require('./model.js');
 
-const app = express();
-app.use(express.json());
-
-app.get('/api/1.0/users/search', authenticateToken, async (req,res) => {
+async function userSearch (req,res) {
     // search?keyword=...
     const keyword = req.query.keyword;
+    const token = res.locals.token;
+    const user = jwt.verify(token, secretKey);
+    const user_id = user.id
     
     console.log(keyword);
     if(!keyword){
-
+        return res.status(400).json({error: 'No keyword'});
     }
 
     const query = 'SELECT * FROM users WHERE `name` LIKE ?';
     const results = await pool.query(query, [`%${keyword}%`]);
     
-    console.log(results);
+    console.log(results[0]);
 
     let users = [];
     for(let i=0; i<results[0].length; i++){
         
+        // friendship with user
+        let friend_id = results[0][i].id;
+        let friendship = await getFriendship(user_id, friend_id);
+        // console.log(result[0]);
+       
         const search_obj = {
-            id: results[0][i].id,
+            id: friend_id,
             name: results[0][i].name,
             picture: results[0][i].picture,
-            friendship: results[0][i].friendship
+            friendship
         }
         users.push(search_obj);
     }
 
     return res.json({data: {users}});
-});
+}
 
-app.listen(port, ()=>{
-    console.log(`Server is running on port ${port}`);
-})
+module.exports = { userSearch };
