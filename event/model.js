@@ -43,25 +43,24 @@ async function addNewEvent(type, user_id, receiver_id){
 
 }
 
-async function addReadEvent(event_id) {
+// async function addReadEvent(event_id) {
 
-    try {
-        const select = `SELECT * FROM events WHERE id = ?`;
-        const results = await pool.query(select, [event_id]);
-        const data = results[0][0];
-        const Date = getDateFormat();
+//     try {
+//         const select = `SELECT * FROM events WHERE id = ?`;
+//         const results = await pool.query(select, [event_id]);
+//         const data = results[0][0];
+//         const Date = getDateFormat();
 
-        const insertEvent = `INSERT INTO events (type, is_read, image, summary, user_id, created_at) VALUE (?,?,?,?,?,?)`;
-        await pool.query(insertEvent, [data.type, true, data.image, data.summary, data.user_id, Date]);
+//         const insertEvent = `INSERT INTO events (type, is_read, image, summary, user_id, created_at) VALUE (?,?,?,?,?,?)`;
+//         await pool.query(insertEvent, [data.type, true, data.image, data.summary, data.user_id, Date]);
 
-    } catch(error) {
-        console.error('Error: ', error);
-        return res.status(500).json({ error: 'Server Error'});
-    }
-    return;
-}
+//     } catch(error) {
+//         console.error('Error: ', error);
+//         return res.status(500).json({ error: 'Server Error'});
+//     }
+//     return;
+// }
 
 module.exports = {
-    addNewEvent,
-    addReadEvent
+    addNewEvent
 }

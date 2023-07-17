@@ -55,9 +55,6 @@ async function readEvent(req, res){
         //     summary: data.summary
         // }
 
-        // read event
-        // addReadEvent(eventsId);
-
         // read event: update is_read = true
         await pool.query('UPDATE events SET is_read = ?', [true]);
         
