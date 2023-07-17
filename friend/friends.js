@@ -161,15 +161,16 @@ async function deleteFriend (req, res) {
     const token = res.locals.token;
     
    // check user.id is user2_id 
-   const select = 'SELECT user2_id FROM friendship WHERE id = ?';
+   const select = 'SELECT user1_id, user2_id FROM friendship WHERE id = ?';
    const results = await pool.query(select, [friendship_id]);
    
-   // console.log(results[0][0]);
+   console.log(results[0][0]);
    const user2_id = results[0][0].user2_id;
+   const user1_id = results[0][0].user1_id;
 
    const user = jwt.verify(token, secretKey);
 
-   if(user.id !== user2_id)
+   if(user.id !== user2_id && user.id !== user1_id)
        return res.status(400).json({error: 'You Can\'t Delete This Request!'});
 
     // update friendship.status = pending
