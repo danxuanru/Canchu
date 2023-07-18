@@ -127,7 +127,7 @@ async function deletePostLike(req, res){
 
 /* create comment */
 async function createPostComment(req, res){
-  const post_id = req.params.id;
+  const post_id = parseInt(req.params.id);
   const {context} = req.body;
 
   const token = res.locals.token;
@@ -138,10 +138,10 @@ async function createPostComment(req, res){
     const date = getDateFormat();
 
     // INSERT post_id's post_likes
-    const query = 'INSERT INTO post_coments (post_id, user_id, context, created_at) VALUES (?,?,?,?)';
+    const query = 'INSERT INTO post_comments (post_id, user_id, context, created_at) VALUES (?,?,?,?)';
     const result = await pool.query(query, [post_id, user_id, context, date]);
-    console.log(result[0][0]);
-    const comment_id = result[0][0].insertId;
+    console.log(result[0]);
+    const comment_id = result[0].insertId;
 
     // update post's like_count
     await pool.query('UPDATE posts SET comment_count = comment_count + 1');
