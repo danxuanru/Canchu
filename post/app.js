@@ -11,7 +11,7 @@ const { authenticateToken } = require('./authorization.js');
 const { requestFriend, getPendingFriends, agreeFriend, deleteFriend } = require('./friends.js');
 const { getEvents, readEvent } = require('./events.js');
 const { userSearch } = require('./search.js');
-const { createPost, updatePost, createPostLike, deletePostLike, createPostComment } = require('./post.js');
+const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
 app.use(express.json());
@@ -52,6 +52,7 @@ app.put('/api/1.0/posts/:id', authenticateToken, updatePost);
 app.post('/api/1.0/posts/:id/like', authenticateToken, createPostLike);
 app.delete('/api/1.0/posts/:id/like', authenticateToken, deletePostLike);
 app.post('/api/1.0/posts/:id/comment', authenticateToken, createPostComment);
+app.get('/api/1.0/posts/:id', authenticateToken, getPostDetail);
 
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
