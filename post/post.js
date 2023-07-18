@@ -118,7 +118,7 @@ async function getPostDetail(req, res){
       name: postData.name,
       comments
     }
-    return res.json({data: post});
+    return res.json({data: {post}});
 
   } catch (error) {
     console.error('error: ', error);
