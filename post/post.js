@@ -64,7 +64,7 @@ async function updatePost(req, res) {
 
 /* post detail */
 async function getPostDetail(req, res){
-  const post_id = req.params.id;
+  const post_id = parseInt(req.params.id);
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const user_id = user.id;
