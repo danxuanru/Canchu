@@ -4,7 +4,6 @@ const pool = require('./database');
 
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 const { getDateFormat } = require('./model');
-const { populate } = require('dotenv');
 
 /* create post */
 async function createPost(req, res) {
