@@ -1,6 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 
 const app = express();
@@ -72,17 +71,35 @@ async function getFriendship(user_id, friend_id){
     if(results[0].length === 0)
         return null;
     else {
-        const friendship = {
-            id: results[0][0].id,
-            status: results[0][0].status
-        }
-        return friendship;
+        // const friendship = {
+        //     id: results[0][0].id,
+        //     status: results[0][0].status
+        // }
+        const [{id, status}] = results[0];
+        console.log({id, status});
+        return {id, status};
     }
 }
 
+async function getLikeOrNot(post_id, user_id) { 
+    const like = await pool.query('SELECT id FROM post_likes WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
+
+    if(like[0].length === 1)
+      return true;
+    return false;
+}
+
+
+async function getUserName(user_id) {
+    const query = 'SELECT name FROM users WHERE id = ?';
+    const result = await pool.query(query, [user_id]);
+    return result[0][0].name;
+}
 
 module.exports = {
     getDateFormat,
     addNewEvent,
-    getFriendship
+    getFriendship,
+    getLikeOrNot,
+    getUserName
 }

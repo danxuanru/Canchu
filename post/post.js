@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database');
 
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
-const { getDateFormat } = require('./model');
+const { getDateFormat, getLikeOrNot } = require('./model');
 
 /* create post */
 async function createPost(req, res) {
@@ -64,7 +64,7 @@ async function updatePost(req, res) {
 
 /* post detail */
 async function getPostDetail(req, res){
-  const post_id = parseInt(req.params.id);
+  const post_id = parseInt(req.params.id);  // should add error handling 
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const user_id = user.id;
@@ -83,10 +83,7 @@ async function getPostDetail(req, res){
           WHERE C.post_id = ?`;
     const comment_results = await pool.query(query, [post_id]);
 
-    const like = await pool.query('SELECT id FROM post_likes WHERE post_id = ? AND user_id = ?', [post_id, user_id]);
-    let is_liked = false;
-    if(like[0].length = 1)
-      is_liked = true;
+    const is_liked = getLikeOrNot(post_id, user_id);
 
     let comments = [];
     for(let i=0; i<comment_results[0].length; i++){
@@ -111,6 +108,7 @@ async function getPostDetail(req, res){
       id: post_id,
       created_at: postData.created_at,
       context: postData.context,
+      summary: postData.summary,
       is_liked,
       like_count: postData.like_count,
       comment_count: postData.comment_count,

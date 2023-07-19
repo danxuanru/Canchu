@@ -10,7 +10,7 @@ const { authenticateToken } = require('./authorization.js');
 
 const { requestFriend, getPendingFriends, agreeFriend, deleteFriend } = require('./friends.js');
 const { getEvents, readEvent } = require('./events.js');
-const { userSearch } = require('./search.js');
+const { userSearch, postSearch } = require('./search.js');
 const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
@@ -46,6 +46,7 @@ app.get('/api/1.0/events/', authenticateToken, getEvents);
 app.post('/api/1.0/events/:event_id/read', authenticateToken, readEvent);
 
 app.get('/api/1.0/users/search', authenticateToken, userSearch);
+app.get('/api/1.0/posts/search', authenticateToken, postSearch);
 
 app.post('/api/1.0/posts/', authenticateToken, createPost);
 app.put('/api/1.0/posts/:id', authenticateToken, updatePost);
