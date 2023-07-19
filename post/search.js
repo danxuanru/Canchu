@@ -59,7 +59,7 @@ async function postSearch(req, res) {
     // create query 
     let query = 'SELECT * FROM posts';
     let params = [];
-		const limit = 5;
+		const limit = 10;
 
     if(user_id && cursor) {
         query += ' WHERE name = ? AND id > ?';
