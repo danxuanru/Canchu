@@ -113,7 +113,7 @@ async function getPost (params, cursor, limit) {
   //                 WHERE P.user_id in (?) ORDER BY P.id ASC LIMIT ?`
   // const id_list = params.join(', '); // array to string
   const query = `SELECT P.*, U.name, U.picture FROM posts AS P LEFT JOIN users AS U ON P.user_id = U.id
-                  WHERE p.user_id in (?) AND p.id > ? ORDER BY p.id ASC LIMIT ?`
+                  WHERE P.user_id in (?) AND P.id > ? ORDER BY P.id ASC LIMIT ?`
   const results = await pool.query(query, [params, cursor, limit]);
   // get users.name & users.picture use getUserData() ?????
   console.log(results[0]);
