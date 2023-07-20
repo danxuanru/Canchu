@@ -12,7 +12,7 @@ async function userSearch (req,res) {
     const user = jwt.verify(token, secretKey);
     const user_id = user.id
     
-    console.log(keyword);
+    console.log('keyword: '+keyword);
     if(!keyword){
         return res.status(400).json({error: 'No keyword'});
     }
@@ -20,7 +20,7 @@ async function userSearch (req,res) {
     const query = 'SELECT * FROM users WHERE `name` LIKE ?';
     const results = await pool.query(query, [`%${keyword}%`]);
     
-    console.log(results[0]);
+    // console.log(results[0]);
 
     let users = [];
     for(let i=0; i<results[0].length; i++){
@@ -64,13 +64,16 @@ async function postSearch(req, res) {
     // no userr_id - get own timeline
     if(!user_id){
       // get my & myFriends post
-      params.push(searcher_id, await getFriendsId(searcher_id));
+      params.push(...searcher_id, ...(await getFriendsId(searcher_id)));
+      // const results = await getFriendsId(searcher_id);
+      // results.map((result) => params.push(result.id));
+      // console.log(params);
       
     } else {
       // get user_id's post 
       params.push(user_id);
     }
-    console.log('id params:'+params);
+    console.log('id params type:'+ typeof(params));
     const results = await getPost(params, cursor_number, limit+1);
     console.log(results);
     let posts = [];
@@ -92,7 +95,7 @@ async function postSearch(req, res) {
       };
       posts.push(post_obj);
     }
-    console.log(posts);
+    // console.log(posts);
 
 		// encode next_cursor
 		// next_cursor = last post in the current page

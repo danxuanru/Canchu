@@ -101,20 +101,20 @@ async function getFriendsId(user_id){
   const results = await pool.query(query, [user_id, user_id]);
   console.log('friend id:'+ results);
   const friend_arr = results[0].map(result => result.id);
-  console.log(friend_arr);
+  console.log(typeof friend_arr);
   return friend_arr;
 }
 
 // ---------------------------------------------------------------
-async function getPost (id_list, cursor, limit) {
+async function getPost (params, cursor, limit) {
   // let id_list = [];
   // id_list.push(await getFriendsId(user_id));
   // const query = `SELECT P.* FROM posts as P INNER JOIN users as U on P.user_id = U.user_id
   //                 WHERE P.user_id in (?) ORDER BY P.id ASC LIMIT ?`
-
+  // const id_list = params.join(', '); // array to string
   const query = `SELECT P.*, U.name, U.picture FROM posts AS P LEFT JOIN users AS U ON P.user_id = U.id
                   WHERE p.user_id in (?) AND p.id > ? ORDER BY p.id ASC LIMIT ?`
-  const results = await pool.query(query, [id_list, cursor, limit]);
+  const results = await pool.query(query, [params, cursor, limit]);
   // get users.name & users.picture use getUserData() ?????
   console.log(results[0]);
   return results[0];
