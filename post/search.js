@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { getFriendship, getLikeOrNot, getUserName } = require('./model.js');
+const { getFriendship, getFriendsId, getPost, getLikeOrNot } = require('./model.js');
 
 async function userSearch (req,res) {
     // search?keyword=...
@@ -50,64 +50,56 @@ async function postSearch(req, res) {
     const token = res.locals.token;
     const searcher = jwt.verify(token, secretKey);
     const searcher_id = searcher.id
-		console.log(user_id);
+		console.log('user_id:'+user_id);
 		
     // cursor decode and convert to number
-		const cursor_number = cursor ? Buffer.from(cursor, 'base64').toString() : null;
+		const cursor_number = cursor ? Buffer.from(cursor, 'base64').toString() : 0;
 		// console.log(cursor_number);
 
     // create query 
-    let query = 'SELECT * FROM posts';
+    // let query = 'SELECT * FROM posts';
     let params = [];
-		const limit = 10;
+		const limit = 5;
 
-    if(user_id && cursor) {
-        query += ' WHERE name = ? AND id > ?';
-        params.push(await getUserName(user_id), cursor_number);
-    } else if(cursor) {
-        query += ' WHERE id > ?';
-        params.push(cursor_number);
-    } else if(user_id) {
-			query += ' WHERE name = ?';
-        params.push(await getUserName(user_id));
-		}
-		query += ' ORDER BY id ASC LIMIT ?';
-		params.push(limit+1);  // query 1 more data
-		console.log(query);
-    const results = await pool.query(query, params);
-		//console.log(results[0]);
-
-    let posts = [];
-		const number_of_posts = results[0].length < 5 ? results[0].length : limit;  // number of posts <= limit
-
-    for(let i=0; i<number_of_posts; i++){
+    // no userr_id - get own timeline
+    if(!user_id){
+      // get my & myFriends post
+      params.push(searcher_id, await getFriendsId(searcher_id));
       
-			// const [{id, created_at, context, like_count, comment_count, picture, name}] = results[0];
-			const postData = results[0][i];
-			// console.log(postData)
-			const is_liked = await getLikeOrNot(postData.id, searcher_id);
-			// console.log(is_liked);
-
+    } else {
+      // get user_id's post 
+      params.push(user_id);
+    }
+    console.log('id params:'+params);
+    const results = await getPost(params, cursor_number, limit+1);
+    console.log(results);
+    let posts = [];
+    let number_of_posts = results.length > limit ? limit : results.length;
+    // console.log('post:'+number_of_posts);
+    for (const [index, result] of results.slice(0, number_of_posts).entries()) {
+    
+      const is_liked = await getLikeOrNot(result.id, searcher_id);
+    
       const post_obj = {
-        id: postData.id,
-        created_at: postData.created_at,
-        context: postData.context,
+        id: result.id,
+        created_at: result.created_at,
+        context: result.context,
         is_liked,
-        like_count: postData.like_count,
-        comment_count: postData.comment_count,
-        picture: postData.picture,
-        name: postData.name
-      }
+        like_count: result.like_count,
+        comment_count: result.comment_count,
+        picture: result.picture,
+        name: result.name
+      };
       posts.push(post_obj);
     }
-		console.log(results[0]);
+    console.log(posts);
 
 		// encode next_cursor
 		// next_cursor = last post in the current page
-		console.log('last post:' + results[0][number_of_posts-1].id); // last post in current page
-		console.log('next post:' + results[0][number_of_posts]);  // next post after current page
-		const next_cursor = results[0][number_of_posts] ? 
-												Buffer.from((results[0][number_of_posts-1].id).toString()).toString('base64') : null;
+		// console.log('last post:' + results[number_of_posts-1].id); // last post in current page
+		// console.log('next post:' + results[number_of_posts].id);  // next post after current page
+		const next_cursor = results[number_of_posts] ? 
+												Buffer.from((results[number_of_posts-1].id).toString()).toString('base64') : null;
   
     return res.json({data: {posts, next_cursor}});
 

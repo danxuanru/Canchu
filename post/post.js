@@ -3,7 +3,7 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database');
 
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
-const { getDateFormat, getLikeOrNot } = require('./model');
+const { getDateFormat, getUserData, getLikeOrNot } = require('./model');
 
 /* create post */
 async function createPost(req, res) {
@@ -22,18 +22,22 @@ async function createPost(req, res) {
     const user_id = user.id;
     // create a function
     // const name = getUserData(user_id, name);
-    const query = 'SELECT name FROM users WHERE id = ?';
-    const result = await pool.query(query, [user_id]);
-    console.log(result[0]);
-    const name = result[0][0].name;
+    // const query = 'SELECT name, picture FROM users WHERE id = ?';
+    // const result = await pool.query(query, [user_id]);
+
+    const { name, picture } = await getUserData(user_id, ['name', 'picture'])
+    // console.log('result: '+ result);
+    // const name = result[0].name;
+    // const picture = result[0].picture;
     console.log(name);
+    console.log(picture);
 
     // get date
     const date = getDateFormat();
 
     // INSERT new post
-    const insert = 'INSERT INTO posts (name, context, created_at, like_count, comment_count) VALUES (?,?,?,?,?)';
-    const post =  await pool.query(insert, [name, context, date, 0, 0]);
+    const insert = 'INSERT INTO posts (user_id, context, created_at, like_count, comment_count) VALUES (?,?,?,?,?)';
+    const post =  await pool.query(insert, [user_id, context, date, 0, 0]);
     const post_id = post[0].insertId;
 
     return res.json({ data: { post: {id: post_id} }});
@@ -70,6 +74,9 @@ async function getPostDetail(req, res){
   const user_id = user.id;
 
   try {
+    // get picture, name from users
+    // getUserData()
+
     // const query = `SELECT P.*, C.id, C.user_id, C.content, C.created_at
     //     FROM posts as P inner join post_comments as C on P.id = C.post_id 
     //     WHERE P.id = ?`;
