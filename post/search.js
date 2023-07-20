@@ -59,7 +59,7 @@ async function postSearch(req, res) {
     // create query 
     // let query = 'SELECT * FROM posts';
     let params = [];
-		const limit = 5;
+		const limit = 10;
 
     // no userr_id - get own timeline
     if(!user_id){
@@ -73,7 +73,7 @@ async function postSearch(req, res) {
       // get user_id's post 
       params.push(user_id);
     }
-    console.log('id params type:'+ typeof(params));
+    
     const results = await getPost(params, cursor_number, limit+1);
     console.log(results);
     let posts = [];
