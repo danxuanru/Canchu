@@ -64,7 +64,7 @@ async function postSearch(req, res) {
     // no userr_id - get own timeline
     if(!user_id){
       // get my & myFriends post
-      params.push(...searcher_id, ...(await getFriendsId(searcher_id)));
+      params.push(searcher_id, ...(await getFriendsId(searcher_id)));
       // const results = await getFriendsId(searcher_id);
       // results.map((result) => params.push(result.id));
       // console.log(params);
