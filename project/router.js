@@ -16,8 +16,8 @@ const { userSearch, postSearch } = require('./search.js');
 const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
-app.use((req, res, next) => {  // cors: set header
-  res.setHeader('Access-Control-Allow-Origin', 'http://10.100.1.7');
+app.use((req, res, next) => { // cors: set header
+  res.setHeader('Access-Control-Allow-Origin', 'https://canchu-for-backend.vercel.app/login');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
