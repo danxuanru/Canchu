@@ -17,7 +17,7 @@ const { createPost, updatePost, createPostLike, deletePostLike, createPostCommen
 
 const app = express();
 app.use((req, res, next) => { // cors: set header
-  res.setHeader('Access-Control-Allow-Origin', 'https://canchu-for-backend.vercel.app/login');
+  res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', 'true');
