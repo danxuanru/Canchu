@@ -37,8 +37,8 @@ const upload = multer({ storage }); // create a instance
 app.post('/api/1.0/users/signup', signUp);
 app.post('/api/1.0/users/signin', signIn);
 
-app.get('/api/1.0/users/:id/profile', authenticateToken, getProfile, updateProfile);
-app.put('/api/1.0/users/profile', authenticateToken);
+app.get('/api/1.0/users/:id/profile', authenticateToken, getProfile);
+app.put('/api/1.0/users/profile', authenticateToken, updateProfile);
 app.put('/api/1.0/users/picture', upload.single('picture'), authenticateToken, updatePicture);
 
 app.get('/api/1.0/friends/pending', authenticateToken, getPendingFriends);
