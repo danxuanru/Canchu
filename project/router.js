@@ -1,7 +1,6 @@
 /* eslint-disable import/extensions */
 require('dotenv').config();
 const express = require('express');
-const cors = require('cors');
 const multer = require('multer');
 
 const port = 5000;
@@ -11,17 +10,19 @@ const { signIn } = require('./signin.js');
 const { getProfile, updatePicture, updateProfile } = require('./profile.js');
 const { authenticateToken } = require('./authorization.js');
 
-const {
-  requestFriend, getPendingFriends, agreeFriend, deleteFriend,
-} = require('./friends.js');
+const { requestFriend, getPendingFriends, agreeFriend, deleteFriend } = require('./friends.js');
 const { getEvents, readEvent } = require('./events.js');
 const { userSearch, postSearch } = require('./search.js');
-const {
-  createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail,
-} = require('./post.js');
+const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
-app.use(cors());
+app.use((req, res, next) => {  // cors: set header
+  res.setHeader('Access-Control-Allow-Origin', 'http://10.100.1.7');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
+});
 app.use(express.json());
 app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
