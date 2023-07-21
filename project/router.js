@@ -29,9 +29,9 @@ const storage = multer.diskStorage({
     // const name = path.extname(file.originalname);
     // cb(null, `${name}`);
     cb(null, `${file.fieldname}-${Date.now()}`);
-  },
+  }
 });
-app.use(express.static(`${__dirname}/images`));
+app.use('/images', express.static(`${__dirname}/images`));
 const upload = multer({ storage }); // create a instance
 
 app.post('/api/1.0/users/signup', signUp);
