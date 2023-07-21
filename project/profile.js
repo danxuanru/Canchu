@@ -53,8 +53,9 @@ async function updatePicture (req, res) {
   if (!req.file) {
     return res.status(400).json({ error: 'No file uploaded' })
   }
+  const token = res.locals.token
+  const user = jwt.verify(token, secretKey)
 
-  // await authenticateToken(req, res);
 
   // use FileReader API: img file -> link
   const imgURL = `https://3.24.21.167/images/${req.file.filename}`
@@ -63,44 +64,44 @@ async function updatePicture (req, res) {
 
   // insert data to database
   try {
-    await pool.query('UPDATE users SET picture = ?', [imgURL])
-    console.log(imgURL)
-    return res.json({ data: { picture: imgURL } })
+    await pool.query('UPDATE users SET picture = ? WHERE id = ?', [imgURL, user.id]);
+    console.log(imgURL);
+    return res.json({ data: { picture: imgURL } });
   } catch (error) {
-    console.error('Insert into users failed: ', error)
-    return res.status(500).json({ error: 'Server Error!' })
+    console.error('Insert into users failed: ', error);
+    return res.status(500).json({ error: 'Server Error!' });
   }
 }
 
 /* profile update */
 async function updateProfile (req, res) {
-  const token = res.locals.token
+  const token = res.locals.token;
   if (req.headers['content-type'] !== 'application/json') {
-    return res.status(400).json({ error: 'Invalid content type. Only application/json is accepted.' })
+    return res.status(400).json({ error: 'Invalid content type. Only application/json is accepted.' });
   }
 
   // header authorization
 
   try {
-    const { name, introduction, tags } = req.body
+    const { name, introduction, tags } = req.body;
 
-    if (!name && !introduction && !tags) { return res.status(400).json({ error: 'No update!' }) }
+    if (!name && !introduction && !tags) { return res.status(400).json({ error: 'No update!' }); }
 
-    const user = jwt.verify(token, secretKey)
+    const user = jwt.verify(token, secretKey);
 
-    const results = await pool.query('SELECT * FROM users WHERE id = ?', [user.id])
+    const results = await pool.query('SELECT * FROM users WHERE id = ?', [user.id]);
     // console.log(results);
-    if (results[0].length === 0) { return res.status(403).json({ error: 'User Not Found!' }) }
+    if (results[0].length === 0) { return res.status(403).json({ error: 'User Not Found!' }); }
 
     // const userFriend = userData.friendship.id;
 
     await pool.query('UPDATE users SET name = ?, introduction = ?, tags = ? WHERE id = ?',
-      [name, introduction, tags, user.id])
+      [name, introduction, tags, user.id]);
 
-    return res.json({ data: { user: { id: user.id } } })
+    return res.json({ data: { user: { id: user.id } } });
   } catch (error) {
-    console.error('Error updatinfg user profile:', error)
-    return res.status(500).json({ error: 'Server Error!' })
+    console.error('Error updatinfg user profile:', error);
+    return res.status(500).json({ error: 'Server Error!' });
   }
 }
 

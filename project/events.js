@@ -6,8 +6,8 @@ const secretKey = `${process.env.JWT_SECRET_KEY}`
 // const { addReadEvent } = require('./model.js');
 
 async function getEvents (req, res) {
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
 
   try {
     // get events data
