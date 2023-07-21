@@ -13,7 +13,7 @@ app.use(express.json());
 /* get profile */
 async function getProfile (req, res) {
 
-  const userId = req.params.id;  // get parameters
+  const userId = req.params.id; // get parameters
 
   // header authorization
   // await authenticateToken(req, res);
@@ -63,7 +63,7 @@ async function updatePicture (req, res) {
   //await authenticateToken(req, res);
 
   // use FileReader API: img file -> link
-  const imgURL = `https://10.100.1.7/images/${req.file.filename}`;
+  const imgURL = `https://3.24.21.167/images/${req.file.filename}`;
   //console.log(req.file.path);
   //console.log(imgURL);
 
