@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 
 const port = 5000;
@@ -16,13 +17,7 @@ const { userSearch, postSearch } = require('./search.js');
 const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
-app.use((req, res, next) => { // cors: set header
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', 'true');
-  next();
-});
+app.use(cors());
 app.use(express.json());
 app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
