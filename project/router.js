@@ -1,6 +1,7 @@
 /* eslint-disable import/extensions */
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');
 const multer = require('multer');
 
 const port = 5000;
@@ -20,6 +21,7 @@ const {
 } = require('./post.js');
 
 const app = express();
+app.use(cors());
 app.use(express.json());
 app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
@@ -62,5 +64,5 @@ app.post('/api/1.0/posts/:id/comment', authenticateToken, createPostComment);
 app.get('/api/1.0/posts/:id', authenticateToken, getPostDetail);
 
 app.listen(port, () => {
-  console.log(`Server is running on port ${port}`);
+  console.log(`CORS-enabled web server is listening on port ${port}`);
 });
