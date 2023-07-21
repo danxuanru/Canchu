@@ -19,7 +19,7 @@ const { createPost, updatePost, createPostLike, deletePostLike, createPostCommen
 const app = express();
 app.use(cors());
 app.use(express.json());
-app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
+// app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
