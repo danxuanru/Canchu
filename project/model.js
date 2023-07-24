@@ -158,10 +158,11 @@ async function getLikeOrNot (post_id, user_id) {
   return false
 }
 
+
 // search ------------------------------------------------------------
 async function getUserSearchObj (userId, type) {
   // improve: user search也能使用這個function
-  const queryType = type;
+  let queryType = type;
   if (type === undefined) queryType = '__NO_FILTER__';
   else if(type === 'requested') queryType = 'pending';
 
@@ -173,7 +174,7 @@ async function getUserSearchObj (userId, type) {
                     FROM users as U JOIN friendship as F ON U.id = F.user1_id
                     WHERE F.user2_id = ? AND status in (?)`;
   let sql = requested;
-  const params = [userId, queryType];
+  let params = [userId, queryType];
   if (type === 'pending') sql = pending;
   else {
     sql = requested + ' UNION ' + pending;

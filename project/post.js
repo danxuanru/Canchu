@@ -143,9 +143,12 @@ async function createPostLike (req, res) {
   const user_id = user.id
 
   try {
+    // check like or not
+    if (getLikeOrNot(post_id, user_id) === true) return res.status(400).json({ error: 'Already liked this post!' });
     // INSERT post_id's post_likes
     const query = 'INSERT INTO post_likes (post_id, user_id) VALUES (?,?)'
-    await pool.query(query, [post_id, user_id])
+    const insert = await pool.query(query, [post_id, user_id])
+    console.log(insert[0].insertId);
 
     // update post's like_count
     // const count = 'UPDATE posts SET like_count = ( SELECT COUNT(*) FROM post_likes WHERE post_id = ?) WHERE id = ?';
@@ -182,11 +185,14 @@ async function deletePostLike (req, res) {
     // console.log(result[0].affectedRows)
 
     // update post's like_count
-    if (result[0].affectedRows === 1) { await pool.query('UPDATE posts SET like_count = like_count - 1 WHERE id = ?', [post_id]) }
-
+    if (result[0].affectedRows === 1) {
+      await pool.query('UPDATE posts SET like_count = like_count-1 WHERE id = ?', [post_id]);
+    } else {
+      return res.status(400).json({ error: 'You have not liked this post before!' });
+    }
     return res.json({ data: { post: { id: post_id } } })
   } catch (error) {
-    console.error('SELECT error: ', error)
+    console.error('DELETE error: ', error)
     return res.status(500).json({ error: 'Server Error' })
   }
 }
