@@ -84,7 +84,7 @@ async function getPostDetail (req, res) {
                         WHERE P.id = ?`
     // 'SELECT * FROM posts WHERE id = ?'
     const post_results = await pool.query(postQuery, [post_id])
-    console.log('post result: ' + post_results[0][0]);
+    console.log('post result user id: ' + post_results[0][0].user_id);
     // const postData = post_results[0][0];
     const { user_id, created_at, context, summary, like_count, comment_count, picture, name } = post_results[0][0];
 
