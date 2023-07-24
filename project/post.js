@@ -79,11 +79,12 @@ async function getPostDetail (req, res) {
     // const query = `SELECT P.*, C.id, C.user_id, C.content, C.created_at
     //     FROM posts as P inner join post_comments as C on P.id = C.post_id
     //     WHERE P.id = ?`;
-    const postQuery = `SELECT P.*, U.picture, U.name
+    const postQuery = `SELECT P.*, U.picture as picture, U.name as name
                         FROM posts as P INNER JOIN users as U ON U.id = P.user_id
                         WHERE P.id = ?`
     // 'SELECT * FROM posts WHERE id = ?'
     const post_results = await pool.query(postQuery, [post_id])
+    console.log('post result: ' + post_results[0][0]);
     // const postData = post_results[0][0];
     const { user_id, created_at, context, summary, like_count, comment_count, picture, name } = post_results[0][0];
 
