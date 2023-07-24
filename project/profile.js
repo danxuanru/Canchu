@@ -6,7 +6,7 @@ const jwt = require('jsonwebtoken')
 const pool = require('./database.js')
 const { getFriendsId, getFriendship, getFriendshipObj } = require('./model.js')
 const secretKey = `${process.env.JWT_SECRET_KEY}`
-
+const domainName = 'https://canchu-for-backend.vercel.app';
 const app = express()
 app.use(express.json())
 
@@ -62,7 +62,7 @@ async function updatePicture (req, res) {
 
 
   // use FileReader API: img file -> link
-  const imgURL = `/images/${req.file.filename}`
+  const imgURL = `${domainName}/images/${req.file.filename}`
   // console.log(req.file.path);
   // console.log(imgURL);
 
