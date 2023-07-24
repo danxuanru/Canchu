@@ -81,7 +81,8 @@ async function getPostDetail (req, res) {
     //     WHERE P.id = ?`;
 
     const post_results = await pool.query('SELECT * FROM posts WHERE id = ?', [post_id])
-    const postData = post_results[0][0]
+    // const postData = post_results[0][0];
+    const { user_id, created_at, context, summary, like_count, comment_count, picture, name } = post_results[0][0];
 
     // const query = 'SELECT id, user_id, content, created_at FROM post_comments WHERE post_id = ?';
     const query = `SELECT C.id, C.user_id, C.content, C.created_at, U.name, U.picture
@@ -93,18 +94,18 @@ async function getPostDetail (req, res) {
 
     const comments = []
     for (let i = 0; i < comment_results[0].length; i++) {
-      const data = comment_results[0][i]
+      const { user_id, name, picture, id, created_at, content } = comment_results[0][i]
 
       const user = {
-        id: data.user_id,
-        name: data.name,
-        picture: data.picture
+        id: user_id,
+        name,
+        picture
       }
 
       const comment_obj = {
-        id: data.id,
-        created_at: data.created_at,
-        content: data.content,
+        id,
+        created_at,
+        content,
         user
       }
       comments.push(comment_obj)
@@ -112,14 +113,15 @@ async function getPostDetail (req, res) {
 
     const post = {
       id: post_id,
-      created_at: postData.created_at,
-      context: postData.context,
-      summary: postData.summary,
+      user_id,
+      created_at,
+      context,
+      summary,
       is_liked,
-      like_count: postData.like_count,
-      comment_count: postData.comment_count,
-      picture: postData.picture,
-      name: postData.name,
+      like_count,
+      comment_count,
+      picture,
+      name,
       comments
     }
     return res.json({ data: { post } })

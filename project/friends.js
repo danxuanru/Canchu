@@ -152,7 +152,7 @@ async function deleteFriend (req, res) {
   res.json({ data: { friendship: { id: friendship_id } } })
 }
 
-async function getFriends(req, res) {
+async function getFriends (req, res) {
 	const token = res.locals.token;
 	const user = jwt.verify(token, secretKey);
 	const userId = user.id;
@@ -162,7 +162,7 @@ async function getFriends(req, res) {
 	// get array of user search obj
 	const users = await getUserSearchObj(userId, 'friend');
 
-	return res.json({data: users});
+	return res.json({ data: { users } });
 }
 
 module.exports = {

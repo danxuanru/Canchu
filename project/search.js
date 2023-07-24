@@ -82,16 +82,17 @@ async function postSearch (req, res) {
     // console.log('post:'+number_of_posts);
     for (const [index, result] of results.slice(0, number_of_posts).entries()) {
       const is_liked = await getLikeOrNot(result.id, searcher_id)
-
+      const { id, created_at, user_id, context, like_count, comment_count, picture, name } = result;
       const post_obj = {
-        id: result.id,
-        created_at: result.created_at,
-        context: result.context,
+        id,
+        user_id,
+        created_at,
+        context,
         is_liked,
-        like_count: result.like_count,
-        comment_count: result.comment_count,
-        picture: result.picture,
-        name: result.name
+        like_count,
+        comment_count,
+        picture,
+        name
       }
       posts.push(post_obj)
     }
