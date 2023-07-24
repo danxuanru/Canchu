@@ -154,7 +154,7 @@ async function getLikeOrNot (post_id, user_id) {
   try {
     const like = await pool.query('SELECT id FROM post_likes WHERE user_id = ? AND post_id = ?', [user_id, post_id]);
     console.log('like: ' + JSON.stringify(like[0]));
-    return true;
+    return like[0].length > 0;
   } catch (error) {
     console.error('SELECT error: ', error);
     return false
