@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const pool = require('./database.js')
@@ -18,16 +19,16 @@ async function getEvents (req, res) {
     for (let i = results[0].length - 1; i >= 0; i--) { // use map
       const is_read = !!results[0][i].is_read; // use double bang '!!' or Boolean
       // how to get true & false from bool automatically ???
-
+      const { id, type, image, created_at, summary } = results[0][i];
       const event = {
-        id: results[0][i].id,
-        type: results[0][i].type,
+        id,
+        type,
         is_read,
-        image: results[0][i].image,
-        created_at: results[0][i].created_at,
-        summary: results[0][i].summary
+        image,
+        created_at,
+        summary
       }
-      console.log(event)
+      console.log('event:' + event)
       events.push(event)
     }
 
