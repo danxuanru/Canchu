@@ -4,7 +4,7 @@ const express = require('express');
 const cors = require('cors');
 const multer = require('multer');
 
-const port = 5000;
+const port = 80;
 
 const { signUp } = require('./signup.js');
 const { signIn } = require('./signin.js');
@@ -17,6 +17,9 @@ const { userSearch, postSearch } = require('./search.js');
 const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
+const corsOption = {
+
+}
 app.use(cors());
 app.use(express.json());
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
