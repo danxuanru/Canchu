@@ -62,7 +62,7 @@ async function updatePicture (req, res) {
 
 
   // use FileReader API: img file -> link
-  const imgURL = `${domainName}/images/${req.file.filename}`
+  const imgURL = `https://3.24.21.167/images/${req.file.filename}`
   // console.log(req.file.path);
   // console.log(imgURL);
 

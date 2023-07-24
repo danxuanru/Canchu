@@ -30,8 +30,8 @@ async function createPost (req, res) {
     // console.log('result: '+ result);
     // const name = result[0].name;
     // const picture = result[0].picture;
-    console.log(name)
-    console.log(picture)
+    console.log('name:' + name)
+    console.log('picture: ' + picture)
 
     // get date
     const date = getDateFormat()
