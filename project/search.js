@@ -31,7 +31,7 @@ async function userSearch (req, res) {
   for (let i = 0; i < results[0].length; i++) {
     // friendship with user
     const { id, name, picture } = results[0][i];
-    const friendship = await getFriendshipObj(id);
+    const friendship = await getFriendship(user_id, id);
 
     const search_obj = {
       id,

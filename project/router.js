@@ -11,7 +11,7 @@ const { signIn } = require('./signin.js');
 const { getProfile, updatePicture, updateProfile } = require('./profile.js');
 const { authenticateToken } = require('./authorization.js');
 
-const { requestFriend, getPendingFriends, agreeFriend, deleteFriend } = require('./friends.js');
+const { requestFriend, getPendingFriends, agreeFriend, deleteFriend, getFriends } = require('./friends.js');
 const { getEvents, readEvent } = require('./events.js');
 const { userSearch, postSearch } = require('./search.js');
 const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
@@ -48,6 +48,7 @@ app.get('/api/1.0/friends/pending', authenticateToken, getPendingFriends);
 app.post('/api/1.0/friends/:user_id/request', authenticateToken, requestFriend);
 app.post('/api/1.0/friends/:friendship_id/agree', authenticateToken, agreeFriend);
 app.delete('/api/1.0/friends/:friendship_id', authenticateToken, deleteFriend);
+app.get('/api/1.0/friends/', authenticateToken, getFriends);
 
 app.get('/api/1.0/events/', authenticateToken, getEvents);
 app.post('/api/1.0/events/:event_id/read', authenticateToken, readEvent);

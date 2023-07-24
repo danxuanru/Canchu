@@ -5,7 +5,7 @@ const jwt = require('jsonwebtoken')
 const pool = require('./database.js')
 const secretKey = `${process.env.JWT_SECRET_KEY}`
 
-const { updateFriendCount, addNewEvent } = require('./model.js')
+const { updateFriendCount, addNewEvent, getFriendsId, getUserSearchObj, getFriendshipObj } = require('./model.js')
 
 const app = express()
 app.use(express.json())
@@ -58,28 +58,32 @@ async function requestFriend (req, res) {
 }
 
 async function getPendingFriends (req, res) {
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+	const userId = user.id;
 
   try {
-    const sql = `SELECT U.id, U.name, U.picture, F.id as friendship_id FROM users as U JOIN friendship as F ON U.id = F.user1_id 
-                    WHERE F.user2_id = ? AND F.status = ?`;
-    // const sql = 'SELECT id, name, picture FROM users JOIN friendship ON users.id = friendship.user1_id WHERE friendship.user2_id = ? AND friendship.status = ?'
-    // const query = 'SELECT * FROM friendship WHERE user1_id = ? AND status = ?';
-    const results = await pool.query(sql, [user.id, 'pending'])
+    // const sql = `SELECT U.id, U.name, U.picture, F.id as friendship_id FROM users as U JOIN friendship as F ON U.id = F.user1_id 
+    //                 WHERE F.user2_id = ? AND F.status = ?`;
+    // // const sql = 'SELECT id, name, picture FROM users JOIN friendship ON users.id = friendship.user1_id WHERE friendship.user2_id = ? AND friendship.status = ?'
+    // // const query = 'SELECT * FROM friendship WHERE user1_id = ? AND status = ?';
+    // const results = await pool.query(sql, [user.id, 'pending'])
+		
+		
+    // const users = []
+    // for (let i = 0; i < results[0].length; i++) {
+    //   const { id, name, picture, friendship_id } = results[0][i]
+    //   const search_obj = {
+    //     id,
+    //     name,
+    //     picture,
+    //     friendship: { id: friendship_id, status: 'pending' }
+    //   }
+    //   users.push(search_obj)
+    //   console.log(search_obj)
+    // }
 
-    const users = []
-    for (let i = 0; i < results[0].length; i++) {
-      const { id, name, picture, friendship_id } = results[0][i]
-      const search_obj = {
-        id,
-        name,
-        picture,
-        friendship: { id: friendship_id, status: 'pending' }
-      }
-      users.push(search_obj)
-      console.log(search_obj)
-    }
+		const users = await getUserSearchObj(userId, 'pending');
 
     return res.json({ data: { users } })
   } catch (err) {
@@ -148,9 +152,23 @@ async function deleteFriend (req, res) {
   res.json({ data: { friendship: { id: friendship_id } } })
 }
 
+async function getFriends(req, res) {
+	const token = res.locals.token;
+	const user = jwt.verify(token, secretKey);
+	const userId = user.id;
+
+  // get friend id
+	// const friendId = getFriendsId(userId);
+	// get array of user search obj
+	const users = await getUserSearchObj(userId, 'friend');
+
+	return res.json({data: users});
+}
+
 module.exports = {
   requestFriend,
   getPendingFriends,
   agreeFriend,
-  deleteFriend
+  deleteFriend,
+	getFriends
 }

@@ -54,13 +54,13 @@ async function addNewEvent (type, user_id, receiver_id) {
 //     return;
 // }
 
-// --------------------------------------------------------------
+// user --------------------------------------------------------------
 async function getUserData (user_id, column_arr) {
   const column_str = column_arr.join(', ')
-  const query = 'SELECT (?) FROM users WHERE id = ?'
+  const query = 'SELECT (?) FROM users WHERE id in (?)'
   try {
     const [results] = await pool.query(query, [column_str, user_id])
-    console.log(results)
+    console.log(results[0]);
     // const data_arr = results[0].map()
     return results[0]
   } catch (error) {
@@ -69,24 +69,22 @@ async function getUserData (user_id, column_arr) {
   }
 }
 
-// -------------------------------------------------------------
+// friend -------------------------------------------------------------
 // 獲取兩者間的關係
-async function getFriendship (user_id, friend_id) {
+async function getFriendship (user_id, friend_id, type) {
+  if (type === undefined) type = '__NO_FILTER__';
+  // console.log('type:' + type);
   const query = `SELECT id, CASE WHEN status = 'pending' THEN 'requested' ELSE status END AS status
-                  FROM friendship WHERE user1_id = ? AND user2_id = ? 
+                  FROM friendship WHERE user1_id = ? AND user2_id in (?) AND status in (?)
                   UNION
                   SELECT id, status 
-                  FROM friendship WHERE user1_id = ? AND user2_id = ?`
-  const results = await pool.query(query, [user_id, friend_id, friend_id, user_id])
+                  FROM friendship WHERE user1_id in (?) AND user2_id = ? AND status in (?)`
+  const results = await pool.query(query, [user_id, friend_id, type, friend_id, user_id, type])
 
-  console.log(results[0])
+  // console.log(results[0])
 
   if (results[0].length === 0) { return null }
 
-  // const friendship = {
-  //     id: results[0][0].id,
-  //     status: results[0][0].status
-  // }
   const { id, status } = results[0][0]
   console.log('friendship:' + { id, status })
   return { id, status }
@@ -137,7 +135,7 @@ async function updateFriendCount (userId, friendId, type) {
   }
 }
 
-// ---------------------------------------------------------------
+// post ---------------------------------------------------------------
 async function getPost (params, cursor, limit) {
   // let id_list = [];
   // id_list.push(await getFriendsId(user_id));
@@ -160,6 +158,53 @@ async function getLikeOrNot (post_id, user_id) {
   return false
 }
 
+// search ------------------------------------------------------------
+async function getUserSearchObj (userId, type) {
+  // improve: user search也能使用這個function
+  const queryType = type;
+  if (type === undefined) queryType = '__NO_FILTER__';
+  else if(type === 'requested') queryType = 'pending';
+
+  const requested = `SELECT U.id, U.name, U.picture, F.id as friendship_id,
+                      CASE WHEN status = 'pending' THEN 'requested' ELSE status END AS status
+                      FROM users as U JOIN friendship as F ON U.id = F.user2_id
+                      WHERE F.user1_id = ? AND status in (?)`;
+  const pending = `SELECT U.id, U.name, U.picture, F.id as friendship_id, status
+                    FROM users as U JOIN friendship as F ON U.id = F.user1_id
+                    WHERE F.user2_id = ? AND status in (?)`;
+  let sql = requested;
+  const params = [userId, queryType];
+  if (type === 'pending') sql = pending;
+  else {
+    sql = requested + ' UNION ' + pending;
+    params.push(userId, queryType);
+  }
+  console.log('sql: ' + sql);
+  console.log('params: ' + params);
+  const data = await pool.query(sql, params);
+
+  // get userData
+  // const userData = await getUserData(friendId, ['id', 'name', 'picture']);
+  // console.log('userData: ' + userData);
+  // const friendshipData = await getFriendship(userId, friendId, 'friend');
+  const users = [];
+  for (let i = 0; i < data[0].length; i++) {
+    const { id, name, picture, friendship_id, status } = data[0][i];
+    const obj = {
+      id,
+      name,
+      picture,
+      friendship: {
+        id: friendship_id,
+        status
+      }
+    }
+    console.log(obj);
+    users.push(obj);
+  }
+  return users;
+}
+
 module.exports = {
   getDateFormat,
   addNewEvent,
@@ -169,5 +214,6 @@ module.exports = {
   getFriendshipObj,
   updateFriendCount,
   getPost,
-  getLikeOrNot
+  getLikeOrNot,
+  getUserSearchObj
 }
