@@ -178,7 +178,8 @@ async function deletePostLike (req, res) {
     // directly delete
     const query = 'DELETE FROM post_likes WHERE post_id = ? AND user_id = ?'
     const result = await pool.query(query, [post_id, user_id])
-    console.log('delete result: ' + result[0])
+    console.log('delete result: ' + result[0]);
+    console.log(result[0].affectedRows);
     // direct delete
     // await pool.query('UPDATE posts SET like_count = like_count-1 WHERE id = ?', [post_id]);
 
