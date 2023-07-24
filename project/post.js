@@ -144,8 +144,8 @@ async function createPostLike (req, res) {
 
   try {
     // check like or not
-    if (getLikeOrNot(post_id, user_id) === true) return res.status(400).json({ error: 'Already liked this post!' });
-
+    if (await getLikeOrNot(post_id, user_id) === true) return res.status(400).json({ error: 'Already liked this post!' });
+    
     // INSERT post_id's post_likes
     const query = 'INSERT INTO post_likes (post_id, user_id) VALUES (?,?)'
     const insert = await pool.query(query, [post_id, user_id])
