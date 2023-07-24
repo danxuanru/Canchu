@@ -35,7 +35,7 @@ async function requestFriend (req, res) {
     const friendship_id = friendship[0].insertId
 
     // add event (select user profile + insert into events)
-    addNewEvent('friend_request', userId, inviteeId)
+    await addNewEvent('friend_request', userId, inviteeId)
 
     const friendshipData = {
       id: friendship_id
@@ -147,7 +147,7 @@ async function deleteFriend (req, res) {
   // add new event
   const user_id = user.id === user1_id ? user1_id : user2_id
   const receiver_id = user_id === user1_id ? user2_id : user1_id
-  addNewEvent('delete_friend', user_id, receiver_id)
+  await addNewEvent('delete_friend', user_id, receiver_id)
 
   res.json({ data: { friendship: { id: friendship_id } } })
 }

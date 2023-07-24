@@ -68,9 +68,9 @@ async function updatePost (req, res) {
 /* post detail */
 async function getPostDetail (req, res) {
   const post_id = parseInt(req.params.id) // should add error handling
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
-  const user_id = user.id
+  // const token = res.locals.token
+  // const user = jwt.verify(token, secretKey)
+  // const user_id = user.id;
 
   try {
     // get picture, name from users
@@ -90,7 +90,8 @@ async function getPostDetail (req, res) {
           WHERE C.post_id = ?`
     const comment_results = await pool.query(query, [post_id])
 
-    const is_liked = getLikeOrNot(post_id, user_id)
+    const is_liked = await getLikeOrNot(post_id, user_id);
+    console.log('is_like: ' + is_liked);
 
     const comments = []
     for (let i = 0; i < comment_results[0].length; i++) {

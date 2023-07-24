@@ -17,7 +17,7 @@ async function getProfile (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const userId = user.id;
-  console.log('target id' + targetUserId);
+  console.log('target id: ' + targetUserId);
   // find data based on id & email
   try {
     const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?'
@@ -62,7 +62,7 @@ async function updatePicture (req, res) {
 
 
   // use FileReader API: img file -> link
-  const imgURL = `https://3.24.21.167/images/${req.file.filename}`
+  const imgURL = `/images/${req.file.filename}`
   // console.log(req.file.path);
   // console.log(imgURL);
 
