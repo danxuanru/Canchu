@@ -153,7 +153,7 @@ async function getPost (params, cursor, limit) {
 async function getLikeOrNot (post_id, user_id) {
   // EXISTS( SELECT 1 FROM likes WHERE L.post_id = P.id AND = L.user_id = ?) as is_liked
   const like = await pool.query('SELECT id FROM post_likes WHERE post_id = ? AND user_id = ?', [post_id, user_id])
-
+  console.log('like: ' + like);
   if (like[0].length === 1) { return true }
   return false
 }
