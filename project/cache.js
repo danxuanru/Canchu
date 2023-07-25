@@ -46,6 +46,7 @@ const cacheUserProfileData = async (visterId, userId) => {
     }
   } catch (error) {
     console.error('Error while caching data: ', error);
+		await client.disconnect();
     return null;
   }
 }
