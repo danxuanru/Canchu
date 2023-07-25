@@ -1,20 +1,20 @@
 /* eslint-disable camelcase */
-require('dotenv').config()
-const jwt = require('jsonwebtoken')
-const pool = require('./database')
+require('dotenv').config();
+const jwt = require('jsonwebtoken');
+const pool = require('./database');
 
-const secretKey = `${process.env.JWT_SECRET_KEY}`
-const { getDateFormat, getUserData, getLikeOrNot } = require('./model')
+const secretKey = `${process.env.JWT_SECRET_KEY}`;
+const { getDateFormat, getUserData, getLikeOrNot } = require('./model');
 
 /* create post */
 async function createPost (req, res) {
-  const { context } = req.body
-  const token = res.locals.token
-  console.log(context)
+  const { context } = req.body;
+  const token = res.locals.token;
+  console.log(context);
 
   // authorize content-type: application/json
   if (req.headers['content-type'] !== 'application/json') {
-    return res.status(400).json({ error: 'Invalid content type. Only application/json is accepted.' })
+    return res.status(400).json({ error: 'Invalid content type. Only application/json is accepted.' });
   }
 
   try {
@@ -50,27 +50,27 @@ async function createPost (req, res) {
 
 /* update post */
 async function updatePost (req, res) {
-  const { context } = req.body
-  const post_id = req.params.id
+  const { context } = req.body;
+  const post_id = req.params.id;
 
   try {
     // UPDATE post_id's post
-    const query = 'UPDATE posts SET context = ? WHERE id = ?'
-    await pool.query(query, [context, post_id])
+    const query = 'UPDATE posts SET context = ? WHERE id = ?';
+    await pool.query(query, [context, post_id]);
 
-    return res.json({ data: { post: { id: post_id } } })
+    return res.json({ data: { post: { id: post_id } } });
   } catch (error) {
-    console.error('SELECT error: ', error)
-    return res.status(500).json({ error: 'Server Error' })
+    console.error('SELECT error: ', error);
+    return res.status(500).json({ error: 'Server Error' });
   }
 }
 
 /* post detail */
 async function getPostDetail (req, res) {
-  const post_id = parseInt(req.params.id) // should add error handling
-  // const token = res.locals.token
-  // const user = jwt.verify(token, secretKey)
-  // const user_id = user.id;
+  const post_id = parseInt(req.params.id); // should add error handling
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+  const visiter_id = user.id;
 
   try {
 
@@ -82,21 +82,21 @@ async function getPostDetail (req, res) {
                         WHERE P.id = ?`;
     const post_results = await pool.query(postQuery, [post_id]);
     console.log('post result user id: ' + post_results[0][0].user_id);
-   
+
     const { user_id, created_at, context, summary, like_count, comment_count, picture, name } = post_results[0][0];
-    
-    // const query = 'SELECT id, user_id, content, created_at FROM post_comments WHERE post_id = ?';
+
     const query = `SELECT C.id, C.user_id, C.content, C.created_at, U.name, U.picture
           FROM post_comments as C inner join users as U on C.user_id = U.id
           WHERE C.post_id = ?`
     const comment_results = await pool.query(query, [post_id]);
-    console.log('post/user id: ' + post_id, user_id);
-    const is_liked = await getLikeOrNot(post_id, user_id);
+
+    console.log('post/user id: ' + post_id, visiter_id);
+    const is_liked = await getLikeOrNot(post_id, visiter_id);
     console.log('is_like: ' + is_liked);
 
     const comments = [];
     for (let i = 0; i < comment_results[0].length; i++) {
-      const { user_id, name, picture, id, created_at, content } = comment_results[0][i]
+      const { user_id, name, picture, id, created_at, content } = comment_results[0][i];
 
       const user = {
         id: user_id,
@@ -110,7 +110,7 @@ async function getPostDetail (req, res) {
         content,
         user
       }
-      comments.push(comment_obj)
+      comments.push(comment_obj);
     }
 
     const post = {
@@ -126,47 +126,47 @@ async function getPostDetail (req, res) {
       name,
       comments
     }
-    return res.json({ data: { post } })
+    return res.json({ data: { post } });
   } catch (error) {
-    console.error('error: ', error)
-    return res.status(500).json({ error: 'Server Error' })
+    console.error('error: ', error);
+    return res.status(500).json({ error: 'Server Error' });
   }
 }
 
 /* create like */
 async function createPostLike (req, res) {
-  const post_id = req.params.id
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
-  const user_id = user.id
+  const post_id = req.params.id;
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+  const user_id = user.id;
 
   try {
     // check like or not
     if (await getLikeOrNot(post_id, user_id) === true) return res.status(400).json({ error: 'Already liked this post!' });
 
     // INSERT post_id's post_likes
-    const query = 'INSERT INTO post_likes (post_id, user_id) VALUES (?,?)'
-    const insert = await pool.query(query, [post_id, user_id])
+    const query = 'INSERT INTO post_likes (post_id, user_id) VALUES (?,?)';
+    const insert = await pool.query(query, [post_id, user_id]);
     console.log('like id: ' + insert[0].insertId);
 
     // update post's like_count
     // const count = 'UPDATE posts SET like_count = ( SELECT COUNT(*) FROM post_likes WHERE post_id = ?) WHERE id = ?';
     // await pool.query(count, [post_id, post_id]);
-    await pool.query('UPDATE posts SET like_count = like_count + 1 WHERE id = ?', [post_id])
+    await pool.query('UPDATE posts SET like_count = like_count + 1 WHERE id = ?', [post_id]);
 
-    return res.json({ data: { post: { id: post_id } } })
+    return res.json({ data: { post: { id: post_id } } });
   } catch (error) {
-    console.error('SELECT error: ', error)
-    return res.status(500).json({ error: 'Server Error' })
+    console.error('SELECT error: ', error);
+    return res.status(500).json({ error: 'Server Error' });
   }
 }
 
 /* delete like */
 async function deletePostLike (req, res) {
-  const post_id = req.params.id
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
-  const user_id = user.id
+  const post_id = req.params.id;
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+  const user_id = user.id;
 
   try {
     // // UPDATE post_id's post_likes is_delete
@@ -174,8 +174,8 @@ async function deletePostLike (req, res) {
     // await pool.query(query, [like_id]);
 
     // directly delete
-    const query = 'DELETE FROM post_likes WHERE post_id = ? AND user_id = ?'
-    const result = await pool.query(query, [post_id, user_id])
+    const query = 'DELETE FROM post_likes WHERE post_id = ? AND user_id = ?';
+    const result = await pool.query(query, [post_id, user_id]);
     console.log('delete result: ' + result[0]);
     console.log(result[0].affectedRows);
     // direct delete
@@ -187,38 +187,38 @@ async function deletePostLike (req, res) {
     } else {
       return res.status(400).json({ error: 'You have not liked this post before!' });
     }
-    return res.json({ data: { post: { id: post_id } } })
+    return res.json({ data: { post: { id: post_id } } });
   } catch (error) {
-    console.error('DELETE error: ', error)
-    return res.status(500).json({ error: 'Server Error' })
+    console.error('DELETE error: ', error);
+    return res.status(500).json({ error: 'Server Error' });
   }
 }
 
 /* create comment */
 async function createPostComment (req, res) {
-  const post_id = parseInt(req.params.id)
-  const { content } = req.body
-  console.log(content)
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
-  const user_id = user.id
+  const post_id = parseInt(req.params.id);
+  const { content } = req.body;
+  console.log(content);
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+  const user_id = user.id;
 
   try {
-    const date = getDateFormat()
+    const date = getDateFormat();
 
     // INSERT post_id's post_likes
-    const query = 'INSERT INTO post_comments (post_id, user_id, content, created_at) VALUES (?,?,?,?)'
-    const result = await pool.query(query, [post_id, user_id, content, date])
-    console.log(result[0])
-    const comment_id = result[0].insertId
+    const query = 'INSERT INTO post_comments (post_id, user_id, content, created_at) VALUES (?,?,?,?)';
+    const result = await pool.query(query, [post_id, user_id, content, date]);
+    console.log(result[0]);
+    const comment_id = result[0].insertId;
 
     // update post's like_count
-    await pool.query('UPDATE posts SET comment_count = comment_count + 1 WHERE id = ?', [post_id])
+    await pool.query('UPDATE posts SET comment_count = comment_count + 1 WHERE id = ?', [post_id]);
 
-    return res.json({ data: { post: { id: post_id }, comment: { id: comment_id } } })
+    return res.json({ data: { post: { id: post_id }, comment: { id: comment_id } } });
   } catch (error) {
-    console.error('SELECT error: ', error)
-    return res.status(500).json({ error: 'Server Error' })
+    console.error('SELECT error: ', error);
+    return res.status(500).json({ error: 'Server Error' });
   }
 }
 
