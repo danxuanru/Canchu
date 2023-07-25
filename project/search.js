@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { getFriendship, getFriendsId, getPost, getLikeOrNot } = require('./model.js');
+const { getFriendship, getFriendsId } = require('./Model/friendModel.js');
+const { getPost, getLikeOrNot } = require('./Model/postModel.js')
 
 async function userSearch (req, res) {
   // search?keyword=...

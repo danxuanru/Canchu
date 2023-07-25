@@ -6,7 +6,9 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { updateFriendCount, addNewEvent, getUserSearchObj } = require('./model.js');
+const { updateFriendCount } = require('./Model/friendModel.js');
+const { addNewEvent } = require('./Model/eventModel.js');
+const { getUserSearchObj } = require('./Model/searchModel.js');
 
 const app = express();
 app.use(express.json());

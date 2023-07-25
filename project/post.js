@@ -5,7 +5,8 @@ const jwt = require('jsonwebtoken');
 const pool = require('./database');
 
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
-const { getDateFormat, getLikeOrNot } = require('./model');
+const getDateFormat = require('./utils');
+const { getLikeOrNot } = require('./Model/postModel');
 
 /* create post */
 async function createPost (req, res) {

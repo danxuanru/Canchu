@@ -1,15 +1,15 @@
 /* eslint-disable semi */
 /* eslint-disable camelcase */
-require('dotenv').config()
-const express = require('express')
-const jwt = require('jsonwebtoken')
-// const timeout = require('connect-timeout');
-const pool = require('./database.js')
-const { getFriendship } = require('./model.js')
-const secretKey = `${process.env.JWT_SECRET_KEY}`
+require('dotenv').config();
+const express = require('express');
+const jwt = require('jsonwebtoken');
+const pool = require('./database.js');
+const { cacheUserProfileData, clearCache } = require('./cache.js');
+const secretKey = `${process.env.JWT_SECRET_KEY}`;
 // const domainName = 'https://canchu-for-backend.vercel.app';
-const app = express()
-app.use(express.json())
+
+const app = express();
+app.use(express.json());
 
 // --------------------------------------------------------
 /* get profile */
@@ -21,31 +21,33 @@ async function getProfile (req, res) {
   console.log('target user id: ' + targetUserId);
   // find data based on id & email
   try {
-    const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?'
-    const results = await pool.query(query, [targetUserId])
+    const user = await cacheUserProfileData(userId, targetUserId);
 
-    if (results[0].length === 0) { return res.status(400).json({ error: 'User not found' }); }
+    // const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?';
+    // const results = await pool.query(query, [targetUserId]);
 
-    const { id, name, picture, introduction, tags, friend_count } = results[0][0];
+    // if (results[0].length === 0) { return res.status(400).json({ error: 'User not found' }); }
 
-    // get friend_count
-    // const friends = await getFriendsId(targetUserId);
-    // console.log('friends:' + friends);
-    // const friend_count = friends.length;
-    // console.log('friend count: ' + friend_count);
+    // const { id, name, picture, introduction, tags, friend_count } = results[0][0];
 
-    const friendship = await getFriendship(userId, targetUserId);
+    // // get friend_count
+    // // const friends = await getFriendsId(targetUserId);
+    // // console.log('friends:' + friends);
+    // // const friend_count = friends.length;
+    // // console.log('friend count: ' + friend_count);
 
-    // response
-    const user = {
-      id,
-      name,
-      picture,
-      friend_count,
-      introduction,
-      tags,
-      friendship
-    }
+    // const friendship = await getFriendship(userId, targetUserId);
+
+    // // response
+    // const user = {
+    //   id,
+    //   name,
+    //   picture,
+    //   friend_count,
+    //   introduction,
+    //   tags,
+    //   friendship
+    // }
     return res.status(200).json({ data: { user } });
   } catch (error) {
     console.log('SELECT user error', error);
@@ -60,7 +62,7 @@ async function updatePicture (req, res) {
   }
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
-
+  const userId = user.id;
 
   // use FileReader API: img file -> link
   const imgURL = `https://3.24.21.167/images/${req.file.filename}`;
@@ -69,8 +71,11 @@ async function updatePicture (req, res) {
 
   // insert data to database
   try {
-    await pool.query('UPDATE users SET picture = ? WHERE id = ?', [imgURL, user.id]);
+    await pool.query('UPDATE users SET picture = ? WHERE id = ?', [imgURL, userId]);
     console.log('URL:' + imgURL);
+    // update - clear cache
+    await clearCache(userId);
+
     return res.json({ data: { picture: imgURL } });
   } catch (error) {
     console.error('Insert into users failed: ', error);
@@ -81,29 +86,30 @@ async function updatePicture (req, res) {
 /* profile update */
 async function updateProfile (req, res) {
   const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+  const userId = user.id;
+
   if (req.headers['content-type'] !== 'application/json') {
     return res.status(400).json({ error: 'Invalid content type. Only application/json is accepted.' });
   }
-
-  // header authorization
 
   try {
     const { name, introduction, tags } = req.body;
 
     if (!name && !introduction && !tags) { return res.status(400).json({ error: 'No update!' }); }
 
-    const user = jwt.verify(token, secretKey);
-
-    const results = await pool.query('SELECT * FROM users WHERE id = ?', [user.id]);
+    const results = await pool.query('SELECT * FROM users WHERE id = ?', [userId]);
     // console.log(results);
     if (results[0].length === 0) { return res.status(403).json({ error: 'User Not Found!' }); }
 
     // const userFriend = userData.friendship.id;
-
     await pool.query('UPDATE users SET name = ?, introduction = ?, tags = ? WHERE id = ?',
-      [name, introduction, tags, user.id]);
+      [name, introduction, tags, userId]);
 
-    return res.json({ data: { user: { id: user.id } } });
+    // update - clear cache
+    await clearCache(userId);
+
+    return res.json({ data: { user: { id: userId } } });
   } catch (error) {
     console.error('Error updatinfg user profile:', error);
     return res.status(500).json({ error: 'Server Error!' });
