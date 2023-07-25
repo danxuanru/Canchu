@@ -73,31 +73,28 @@ async function getPostDetail (req, res) {
   // const user_id = user.id;
 
   try {
-    // get picture, name from users
-    // getUserData()
 
     // const query = `SELECT P.*, C.id, C.user_id, C.content, C.created_at
     //     FROM posts as P inner join post_comments as C on P.id = C.post_id
     //     WHERE P.id = ?`;
     const postQuery = `SELECT P.*, U.picture as picture, U.name as name
                         FROM posts as P INNER JOIN users as U ON U.id = P.user_id
-                        WHERE P.id = ?`
-    // 'SELECT * FROM posts WHERE id = ?'
-    const post_results = await pool.query(postQuery, [post_id])
+                        WHERE P.id = ?`;
+    const post_results = await pool.query(postQuery, [post_id]);
     console.log('post result user id: ' + post_results[0][0].user_id);
-    // const postData = post_results[0][0];
+   
     const { user_id, created_at, context, summary, like_count, comment_count, picture, name } = post_results[0][0];
-
+    
     // const query = 'SELECT id, user_id, content, created_at FROM post_comments WHERE post_id = ?';
     const query = `SELECT C.id, C.user_id, C.content, C.created_at, U.name, U.picture
           FROM post_comments as C inner join users as U on C.user_id = U.id
           WHERE C.post_id = ?`
-    const comment_results = await pool.query(query, [post_id])
-
+    const comment_results = await pool.query(query, [post_id]);
+    console.log('post/user id: ' + post_id, user_id);
     const is_liked = await getLikeOrNot(post_id, user_id);
     console.log('is_like: ' + is_liked);
 
-    const comments = []
+    const comments = [];
     for (let i = 0; i < comment_results[0].length; i++) {
       const { user_id, name, picture, id, created_at, content } = comment_results[0][i]
 
