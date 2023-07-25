@@ -2,7 +2,7 @@
 /* eslint-disable semi */
 require('dotenv').config();
 const express = require('express');
-const pool = require('../database.js');
+const pool = require('../database');
 const { getFriendship } = require('./friendModel.js');
 
 const app = express();
