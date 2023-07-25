@@ -1,3 +1,4 @@
+/* eslint-disable semi */
 /* eslint-disable import/extensions */
 require('dotenv').config();
 const express = require('express');

@@ -1,12 +1,13 @@
+/* eslint-disable semi */
 /* eslint-disable camelcase */
 require('dotenv').config()
 const express = require('express')
 const jwt = require('jsonwebtoken')
 // const timeout = require('connect-timeout');
 const pool = require('./database.js')
-const { getFriendsId, getFriendship, getFriendshipObj } = require('./model.js')
+const { getFriendship } = require('./model.js')
 const secretKey = `${process.env.JWT_SECRET_KEY}`
-const domainName = 'https://canchu-for-backend.vercel.app';
+// const domainName = 'https://canchu-for-backend.vercel.app';
 const app = express()
 app.use(express.json())
 
@@ -17,13 +18,13 @@ async function getProfile (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const userId = user.id;
-  console.log('target id: ' + targetUserId);
+  console.log('target user id: ' + targetUserId);
   // find data based on id & email
   try {
     const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?'
     const results = await pool.query(query, [targetUserId])
 
-    if (results[0].length === 0) { return res.status(400).json({ error: 'User not found' }) }
+    if (results[0].length === 0) { return res.status(400).json({ error: 'User not found' }); }
 
     const { id, name, picture, introduction, tags, friend_count } = results[0][0];
 
@@ -45,31 +46,31 @@ async function getProfile (req, res) {
       tags,
       friendship
     }
-    return res.status(200).json({ data: { user } })
+    return res.status(200).json({ data: { user } });
   } catch (error) {
-    console.log('SELECT user error', error)
-    return res.status(500).json({ error: 'Server Error' })
+    console.log('SELECT user error', error);
+    return res.status(500).json({ error: 'Server Error' });
   }
 };
 
 /* picture update */
 async function updatePicture (req, res) {
   if (!req.file) {
-    return res.status(400).json({ error: 'No file uploaded' })
+    return res.status(400).json({ error: 'No file uploaded' });
   }
-  const token = res.locals.token
-  const user = jwt.verify(token, secretKey)
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
 
 
   // use FileReader API: img file -> link
-  const imgURL = `https://3.24.21.167/images/${req.file.filename}`
+  const imgURL = `https://3.24.21.167/images/${req.file.filename}`;
   // console.log(req.file.path);
   // console.log(imgURL);
 
   // insert data to database
   try {
     await pool.query('UPDATE users SET picture = ? WHERE id = ?', [imgURL, user.id]);
-    console.log(imgURL);
+    console.log('URL:' + imgURL);
     return res.json({ data: { picture: imgURL } });
   } catch (error) {
     console.error('Insert into users failed: ', error);
