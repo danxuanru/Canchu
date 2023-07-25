@@ -9,8 +9,8 @@ const { getProfileData } = require('./Model/profileModel');
 const app = express();
 app.use(express.json());
 
-client.on('connect', () => console.log('Redis Connect Successfully!'));
-client.on('error', err => console.log('Redis Client Error', err));
+// client.on('connect', () => console.log('Redis Connect Successfully!'));
+// client.on('error', err => console.log('Redis Client Error', err));
 // await client.connect();
 
 // promise 包裝 redis 方法 , 以支援 async / await
@@ -18,11 +18,11 @@ const getAsync = promisify(client.get).bind(client);
 const setAsync = promisify(client.set).bind(client);
 const delAsync = promisify(client.del).bind(client);
 
-async function cacheUserProfileData (visterId, userId) {
-  try {
-    // connect cache
-    await client.connect();
+const cacheUserProfileData = async (visterId, userId) => {
+  // connect cache
+  await client.connect();
 
+  try {
     // check cache 是否已經有 user 的 profile data
     const cachedData = await getAsync(userId);
 
@@ -50,7 +50,7 @@ async function cacheUserProfileData (visterId, userId) {
   }
 }
 
-async function clearCache (userId) {
+const clearCache = async (userId) => {
   await client.connect();
 
   try {
