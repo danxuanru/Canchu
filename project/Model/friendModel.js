@@ -22,7 +22,7 @@ async function getFriendship (user_id, friend_id, type) {
     // console.log(results[0])
     if (results[0].length === 0) { return null; }
     const { id, status } = results[0][0];
-    console.log('friendship:' + { id, status });
+    console.log('get friendship:' + { id, status });
     return { id, status };
   } catch (error) {
     console.log('SELECT error: ', error);
@@ -37,7 +37,7 @@ async function getFriendsId (user_id) {
   const results = await pool.query(query, [user_id, user_id]);
   // console.log(`friend id:${results}`);
   const friend_arr = results[0].map((result) => result.id);
-  // console.log(friend_arr);
+  console.log('get friend id: ' + friend_arr);
   return friend_arr;
 }
 
@@ -60,6 +60,7 @@ async function getFriendshipObj (user_id) {
     }
     friendship_obj.push(obj);
   }
+  console.log('get friendship obj: ' + friendship_obj);
   return friendship_obj;
 }
 

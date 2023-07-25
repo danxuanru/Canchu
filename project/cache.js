@@ -23,6 +23,7 @@ const cacheUserProfileData = async (visterId, userId) => {
 
   try {
     // check cache 是否已經有 user 的 profile data
+    console.log(visterId + ' get ' + userId + ' profile cache data');
     const cachedData = await client.get(userId);
 
     if (cachedData) {

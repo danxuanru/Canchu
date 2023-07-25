@@ -25,6 +25,10 @@ app.use(cors());
 app.use(express.json());
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
+const { clearCache } = require('./cache.js');
+await clearCache();
+console.log('clear cache');
+
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'images');
