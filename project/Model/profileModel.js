@@ -28,6 +28,7 @@ async function getProfileData (visiterId, userId) {
     tags,
     friendship
   }
+  console.log(user);
   return user;
 }
 
