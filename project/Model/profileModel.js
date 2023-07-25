@@ -16,12 +16,6 @@ async function getProfileData (visiterId, userId) {
 
   const { id, name, picture, introduction, tags, friend_count } = results[0][0];
 
-  // get friend_count
-  // const friends = await getFriendsId(targetUserId);
-  // console.log('friends:' + friends);
-  // const friend_count = friends.length;
-  // console.log('friend count: ' + friend_count);
-
   const friendship = await getFriendship(visiterId, userId);
 
   // response
@@ -34,7 +28,7 @@ async function getProfileData (visiterId, userId) {
     tags,
     friendship
   }
-  return { data: { user } };
+  return user;
 }
 
 module.exports = { getProfileData };

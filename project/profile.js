@@ -18,9 +18,10 @@ async function getProfile (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const userId = user.id;
-  console.log('target user id: ' + targetUserId);
+  // console.log('target user id: ' + targetUserId);
   // find data based on id & email
   try {
+    console.log('get user: ' + targetUserId + ' profile');
     const user = await cacheUserProfileData(userId, targetUserId);
 
     // const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?';
