@@ -11,7 +11,7 @@ app.use(express.json());
 
 client.on('connect', () => console.log('Redis Connect Successfully!'));
 client.on('error', err => console.log('Redis Client Error', err));
-await client.connect();
+// await client.connect();
 
 // promise 包裝 redis 方法 , 以支援 async / await
 const getAsync = promisify(client.get).bind(client);
