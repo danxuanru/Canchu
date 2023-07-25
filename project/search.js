@@ -54,7 +54,8 @@ async function postSearch (req, res) {
     const token = res.locals.token;
     const searcher = jwt.verify(token, secretKey);
     const searcher_id = searcher.id;
-    // console.log('user_id:' + user_id);
+
+    console.log(searcher_id + ' search user ' + user_id + ' post');
 
     // cursor decode and convert to number
     const cursor_number = cursor ? Buffer.from(cursor, 'base64').toString() : 0;
@@ -98,7 +99,7 @@ async function postSearch (req, res) {
       }
       posts.push(post_obj);
     }
-    // console.log(posts);
+    console.log('post result: ' + posts);
 
     // encode next_cursor
     // next_cursor = last post in the current page

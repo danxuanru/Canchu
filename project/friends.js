@@ -65,6 +65,8 @@ async function getPendingFriends (req, res) {
   const user = jwt.verify(token, secretKey);
   const userId = user.id;
 
+  console.log(userId + ' get pending friends');
+
   try {
     // const sql = `SELECT U.id, U.name, U.picture, F.id as friendship_id FROM users as U JOIN friendship as F ON U.id = F.user1_id
     //                 WHERE F.user2_id = ? AND F.status = ?`;
@@ -114,6 +116,8 @@ async function agreeFriend (req, res) {
   const user = jwt.verify(token, secretKey)
   if (user.id !== user2_id) { return res.status(400).json({ error: 'You Can\'t Agree This Request!' }); }
 
+  console.log(user.id + ' agree friendship: ' + friendship_id);
+
   // update friendship.status = pending
   const update = 'UPDATE friendship SET status = ? WHERE id = ?';
   await pool.query(update, ['friend', friendship_id]);
@@ -141,6 +145,8 @@ async function deleteFriend (req, res) {
 
   if (user.id !== user2_id && user.id !== user1_id) { return res.status(400).json({ error: 'You Can\'t Delete This Request!' }); }
 
+  console.log(user.id + ' delete friendship: ' + friendship_id);
+
   // update friendship.status = pending
   const deleteFriendship = 'DELETE from friendship WHERE id = ?';
   await pool.query(deleteFriendship, [friendship_id]);
@@ -158,6 +164,8 @@ async function getFriends (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const userId = user.id;
+
+  console.log(userId + ' get friends');
 
   // get friend id
   // const friendId = getFriendsId(userId);

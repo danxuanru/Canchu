@@ -27,8 +27,8 @@ async function getUserSearchObj (userId, type) {
     sql = requested + ' UNION ' + pending;
     params.push(userId, queryType);
   }
-  console.log('sql: ' + sql);
-  console.log('params: ' + params);
+  // console.log('sql: ' + sql);
+  // console.log('params: ' + params);
   const data = await pool.query(sql, params);
 
   // get userData

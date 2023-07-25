@@ -10,6 +10,8 @@ const { getLikeOrNot } = require('./Model/postModel');
 
 /* create post */
 async function createPost (req, res) {
+  console.log('create post');
+
   const { context } = req.body;
   const token = res.locals.token;
 
@@ -51,6 +53,8 @@ async function createPost (req, res) {
 
 /* update post */
 async function updatePost (req, res) {
+  console.log('update post');
+
   const { context } = req.body;
   const post_id = req.params.id;
 
@@ -72,6 +76,8 @@ async function getPostDetail (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const visiter_id = user.id;
+
+  console.log(visiter_id + ' get post ' + post_id + 'detail');
 
   try {
     // const query = `SELECT P.*, C.id, C.user_id, C.content, C.created_at
@@ -139,6 +145,8 @@ async function createPostLike (req, res) {
   const user = jwt.verify(token, secretKey);
   const user_id = user.id;
 
+  console.log(user_id + ' like post ' + post_id);
+
   try {
     // check like or not
     if (await getLikeOrNot(post_id, user_id) === true) return res.status(400).json({ error: 'Already liked this post!' });
@@ -166,6 +174,8 @@ async function deletePostLike (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const user_id = user.id;
+
+  console.log(user_id + ' cancel like post ' + post_id);
 
   try {
     // // UPDATE post_id's post_likes is_delete
@@ -199,6 +209,8 @@ async function createPostComment (req, res) {
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   const user_id = user.id;
+
+  console.log(user_id + ' comment post ' + post_id);
 
   try {
     const date = getDateFormat();
