@@ -1,10 +1,9 @@
 /* eslint-disable semi */
-import { createClient } from 'redis';
-const client = createClient(); // port 6379
-const { promisify } = require('util');
-
 require('dotenv').config();
 const express = require('express');
+const redis = require('redis');
+const client = redis.createClient(); // port 6379
+const { promisify } = require('util');
 const { getProfileData } = require('./Model/profileModel');
 
 const app = express();
