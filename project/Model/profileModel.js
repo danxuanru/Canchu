@@ -17,7 +17,7 @@ async function getProfileData (visiterId, userId) {
 
     const { id, name, picture, introduction, tags, friend_count } = results[0][0];
 
-    const friendship = await getFriendship(visiterId, userId);
+    const friendship = await getFriendship(visiterId, userId, 'friend');
 
     // response
     const user = {
