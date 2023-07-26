@@ -26,8 +26,13 @@ const corsOption = {
 };
 app.use(cors(corsOption));
 app.use(express.json());
-// app.use(limiter);
+
+app.set('trust proxy', true);
+app.use(limiter);
+
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
+
+// app.get('/ip', (request, response) => response.send(request.ip))
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
