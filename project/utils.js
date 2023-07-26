@@ -10,4 +10,4 @@ function getDateFormat () {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-module.export = { getDateFormat };
+module.exports = { getDateFormat };
