@@ -3,7 +3,7 @@
 require('dotenv').config();
 const express = require('express');
 const pool = require('../database');
-const { getDateFormat } = require('../utils.js');
+const { getDateFormat } = require('../utils');
 
 const app = express();
 app.use(express.json());

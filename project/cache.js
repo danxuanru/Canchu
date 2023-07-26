@@ -28,6 +28,7 @@ const cacheUserProfileData = async (visterId, userId) => {
 
     if (cachedData) {
       console.log('data found in cache');
+      console.log('data: ' + cachedData);
       return JSON.parse(cachedData);
     } else {
       console.log('Data not found in cache. Retrieving from the database');

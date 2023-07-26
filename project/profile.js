@@ -74,6 +74,7 @@ async function updatePicture (req, res) {
   try {
     await pool.query('UPDATE users SET picture = ? WHERE id = ?', [imgURL, userId]);
     console.log('URL:' + imgURL);
+
     // update - clear cache
     await clearCache(userId);
 
