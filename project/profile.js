@@ -37,7 +37,7 @@ async function getProfile (req, res) {
     // // const friend_count = friends.length;
     // // console.log('friend count: ' + friend_count);
 
-    // const friendship = await getFriendship(userId, targetUserId);
+    // const friendship = await getFriendship(userId, targetUserId, 'friend');
 
     // // response
     // const user = {

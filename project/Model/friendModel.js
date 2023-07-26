@@ -8,16 +8,16 @@ const app = express();
 app.use(express.json());
 
 // 獲取兩者間的關係
-async function getFriendship (user_id, friend_id, type) {
-  if (type === undefined) type = '__NO_FILTER__';
-  console.log('type:' + type);
+async function getFriendship (user_id, friend_id) {
+  // if (type === undefined) type = '__NO_FILTER__';
+  // console.log('type:' + type);
   const query = `SELECT id, CASE WHEN status = 'pending' THEN 'requested' ELSE status END AS status
-                  FROM friendship WHERE user1_id = ? AND user2_id in (?) AND status in (?) 
+                  FROM friendship WHERE user1_id = ? AND user2_id in (?) AND status = 'friend' 
                   UNION 
                   SELECT id, status 
-                  FROM friendship WHERE user1_id in (?) AND user2_id = ? AND status in (?)`;
+                  FROM friendship WHERE user1_id in (?) AND user2_id = ? AND status = 'friend`;
 
-  const value = [user_id, friend_id, type, friend_id, user_id, type];
+  const value = [user_id, friend_id, friend_id, user_id];
   try {
     const results = await pool.query(query, value);
     console.log('friendship: ' + results[0])
