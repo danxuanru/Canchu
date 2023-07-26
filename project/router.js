@@ -27,7 +27,7 @@ const corsOption = {
 app.use(cors(corsOption));
 app.use(express.json());
 
-app.set('trust proxy', 1);
+app.set('trust proxy', true);
 app.use(limiter);
 
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
