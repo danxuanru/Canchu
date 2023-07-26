@@ -30,8 +30,8 @@ app.use(express.json());
 // app.set('trust proxy', true);
 app.use(limiter);
 
-app.set('trust proxy', 1)
-app.get('/ip', (request, response) => response.send(request.ip))
+app.set('trust proxy', 2);
+app.get('/ip', (request, response) => response.send(request.ip));
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
 const storage = multer.diskStorage({
