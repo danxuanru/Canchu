@@ -4,7 +4,6 @@ const jwt = require('jsonwebtoken');
 
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-// eslint-disable-next-line consistent-return
 async function authenticateToken (req, res, next) {
   const header = req.headers.authorization;
 
@@ -12,7 +11,6 @@ async function authenticateToken (req, res, next) {
 
   const token = header.split(' ')[1];
 
-  // eslint-disable-next-line consistent-return
   jwt.verify(token, secretKey, (err, user) => {
     if (err) { return res.status(403).json({ error: 'Invalid Token' }); }
 
