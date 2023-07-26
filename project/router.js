@@ -27,20 +27,10 @@ const corsOption = {
 app.use(cors(corsOption));
 app.use(express.json());
 
-app.set('trust proxy', true);
+app.set('trust proxy', 'https://canchu-for-backend.vercel.app');
 // app.use(limiter);
 
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
-
-app.get('/', (req, res) => {
-  // Get the IP address of the client making the request
-  const clientIP = req.ip;
-
-  // Get the IP address of the proxy (if available) from the 'x-forwarded-for' header
-  const proxyIP = req.headers['x-forwarded-for'];
-
-  res.send(`Client IP: ${clientIP}, Proxy IP: ${proxyIP}`);
-});
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
