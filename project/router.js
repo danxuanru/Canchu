@@ -11,18 +11,21 @@ const { signUp } = require('./signup.js');
 const { signIn } = require('./signin.js');
 const { getProfile, updatePicture, updateProfile } = require('./profile.js');
 const { authenticateToken } = require('./authorization.js');
-
 const { requestFriend, getPendingFriends, agreeFriend, deleteFriend, getFriends } = require('./friends.js');
 const { getEvents, readEvent } = require('./events.js');
 const { userSearch, postSearch } = require('./search.js');
 const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
+const { limiter } = require('./rateLimiter.js');
 const app = express();
 const corsOption = {
-
-}
-app.use(cors());
+  origin: 'https://canchu-for-backend.vercel.app/',
+  method: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+  allowedHeaders: ['Content-Type', 'Authorization']
+};
+app.use(cors(corsOption));
 app.use(express.json());
+app.use(limiter);
 // app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
 
 // const { clearCache } = require('./cache.js');
