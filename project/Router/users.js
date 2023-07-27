@@ -315,8 +315,8 @@ async function userSearch (req, res) {
   return res.json({ data: { users } });
 }
 
-router.post('/signup', authenticateToken, signUp);
-router.post('/signin', authenticateToken, signIn);
+router.post('/signup', signUp);
+router.post('/signin', signIn);
 router.get('/:id/profile', authenticateToken, getProfile);
 router.put('/profile', authenticateToken, updateProfile);
 router.put('/picture', authenticateToken, upload.single('picture'), updatePicture);
