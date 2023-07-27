@@ -16,12 +16,13 @@ const cors = require('cors');
 // const { limiter } = require('./rateLimiter.js');
 
 const app = express();
+
 const corsOption = {
   origin: 'https://canchu-for-backend.vercel.app',
   method: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   allowedHeaders: ['Content-Type', 'Authorization']
 };
-app.use(cors(corsOption));
+app.use(cors());
 app.use(express.json());
 
 // app.set('trust proxy', true);

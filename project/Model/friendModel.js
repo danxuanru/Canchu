@@ -10,7 +10,7 @@ app.use(express.json());
 // 獲取兩者間的關係
 async function getFriendship (user_id, friend_id, type) {
   // if (type === undefined) type = 'NULL';
-  // console.log('type:' + type);
+  console.log('type:' + type);
   const query = `SELECT id, CASE WHEN status = 'pending' THEN 'requested' ELSE status END AS status
                   FROM friendship WHERE user1_id = ? AND user2_id in (?) AND (status = ? OR ? IS NULL)
                   UNION 

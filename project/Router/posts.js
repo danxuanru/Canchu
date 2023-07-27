@@ -77,7 +77,7 @@ async function updatePost (req, res) {
 /* post detail */
 async function getPostDetail (req, res) {
   try {
-    console.log('post id: ' + parseInt(req.params.id));
+    console.log('post id: ' + req.params.id);
   } catch (error) {
     console.error(error);
   }

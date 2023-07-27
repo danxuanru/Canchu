@@ -1,12 +1,8 @@
 /* eslint-disable semi */
 require('dotenv').config();
-const express = require('express');
 const Redis = require('ioredis');
 const client = new Redis(); // port 6379
 const { getProfileData } = require('./Model/profileModel');
-
-const app = express();
-app.use(express.json());
 
 // client.on('connect', () => console.log('Redis Connect Successfully!'));
 // client.on('error', err => console.log('Redis Client Error', err));
