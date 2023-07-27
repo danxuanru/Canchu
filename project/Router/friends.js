@@ -3,16 +3,16 @@
 require('dotenv').config();
 const express = require('express');
 const jwt = require('jsonwebtoken');
-const pool = require('./database.js');
+const pool = require('../database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { updateFriendCount } = require('./Model/friendModel.js');
-const { addNewEvent } = require('./Model/eventModel.js');
-const { getUserSearchObj } = require('./Model/searchModel.js');
-const { clearCache } = require('./cache.js');
+const { authenticateToken } = require('../authorization.js');
+const { updateFriendCount } = require('../Model/friendModel.js');
+const { addNewEvent } = require('../Model/eventModel.js');
+const { getUserSearchObj } = require('../Model/searchModel.js');
+const { clearCache } = require('../cache.js');
 
-const app = express();
-app.use(express.json());
+const router = express.Router();
 
 async function requestFriend (req, res) {
   const inviteeId = +req.params.user_id; // get parameters: use '+' replace parseInt
@@ -179,10 +179,10 @@ async function getFriends (req, res) {
   return res.json({ data: { users } });
 }
 
-module.exports = {
-  requestFriend,
-  getPendingFriends,
-  agreeFriend,
-  deleteFriend,
-  getFriends
-}
+router.post('/:user_id/request', authenticateToken, requestFriend);
+router.get('/pending', authenticateToken, getPendingFriends);
+router.post('/:friendship_id/agree', authenticateToken, agreeFriend);
+router.delete('/:friendship_id', authenticateToken, deleteFriend);
+router.get('/', authenticateToken, getFriends);
+
+module.exports = router;

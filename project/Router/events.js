@@ -1,11 +1,12 @@
 /* eslint-disable semi */
 /* eslint-disable camelcase */
 require('dotenv').config();
+const express = require('express');
 const jwt = require('jsonwebtoken');
-const pool = require('./database.js');
+const pool = require('../database');
+const { authenticateToken } = require('../authorization');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
-
-// const { addReadEvent } = require('./model.js');
+const router = express.Router();
 
 async function getEvents (req, res) {
   const token = res.locals.token;
@@ -63,7 +64,7 @@ async function readEvent (req, res) {
   }
 }
 
-module.exports = {
-  getEvents,
-  readEvent
-}
+router.get('/', authenticateToken, getEvents);
+router.post('/:event_id/read', authenticateToken, readEvent);
+
+module.exports = router;
