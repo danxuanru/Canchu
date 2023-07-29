@@ -17,7 +17,7 @@ const { createPost, updatePost, createPostLike, deletePostLike, createPostCommen
 // const { limiter } = require('./rateLimiter.js');
 
 const app = express();
-const port = 5000;
+const port = 80;
 
 const corsOption = {
   origin: 'https://canchu-for-backend.vercel.app',
@@ -83,6 +83,7 @@ try {
   app.get('/api/1.0/groups/:group_id/posts', authenticateToken, getGroupPost);
 
   app.post('/api/1.0/chat/:user_id', authenticateToken, sendChat);
+  app.get('/api/1.0/chat/:user_id/messages', authenticateToken, getChat);
 } catch (error) {
   console.error(error);
 }
