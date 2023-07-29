@@ -17,7 +17,7 @@ const { createPost, updatePost, createPostLike, deletePostLike, createPostCommen
 // const { limiter } = require('./rateLimiter.js');
 
 const app = express();
-const port = 80;
+const port = 5000;
 
 const corsOption = {
   origin: 'https://canchu-for-backend.vercel.app',
