@@ -4,6 +4,12 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 
+const { rateLimiter } = require('./utils/rateLimiter');
+const usersRouter = require('./Router/users_router');
+const friendsRouter = require('./Router/friends_router');
+const eventsRouter = require('./Router/events_router');
+const postsRouter = require('./Router/posts_router');
+
 // const { signUp } = require('./signup.js');
 // const { signIn } = require('./signin.js');
 // const { getProfile, updatePicture, updateProfile } = require('./profile.js');
@@ -14,6 +20,7 @@ const cors = require('cors');
 // const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
 const app = express();
+app.use('/images', express.static(`${__dirname}/images`));
 
 const corsOption = {
   origin: 'https://canchu-for-backend.vercel.app',
@@ -26,30 +33,9 @@ app.use(express.json());
 // app.set('trust proxy', true);
 // app.use(limiter);
 
-// app.use('/.well-known/pki-validation/', express.static(__dirname + '/images'));
-
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, 'images');
-//   },
-//   filename: (req, file, cb) => {
-//     // const name = path.extname(file.originalname);
-//     // cb(null, `${name}`);
-//     cb(null, `${file.fieldname}-${Date.now()}`);
-//   }
-// });
-// const upload = multer({ storage }); // create a instance
-
-app.use('/images', express.static(`${__dirname}/images`));
-
-const { rateLimiter } = require('./utils/rateLimiter');
 app.use(rateLimiter);
 
 // use router
-const usersRouter = require('./Router/users_router');
-const friendsRouter = require('./Router/friends_router');
-const eventsRouter = require('./Router/events_router');
-const postsRouter = require('./Router/posts_router');
 
 app.use('/api/1.0/users', usersRouter);
 app.use('/api/1.0/friends', friendsRouter);
