@@ -94,9 +94,6 @@ async function deleteCertainCache (keyword) {
     }
   } catch (error) {
     console.error('Error while deleting profile cache keys:', error);
-  } finally {
-    // Close the Redis client connection (optional)
-    await client.quit();
   }
 }
 
