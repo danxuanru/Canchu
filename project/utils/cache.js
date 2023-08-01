@@ -38,11 +38,35 @@ const cacheUserProfileData = async (visterId, userId) => {
 
 const clearCache = async (userId) => {
   // await client.connect();
-
   try {
     // delete user data in cache
     await client.del(userId);
     console.log('Cache cleared for user: ', userId);
+  } catch (error) {
+    console.error('Error while clearing cache', error);
+  }
+}
+async function clearAllCacheExpect (pattern) {
+  try {
+    let cursor = '0';
+
+    do {
+      // Use SCAN to retrieve keys in batches , '*' macth all key
+      const [nextCursor, keys] = await client.scan(cursor, 'MATCH', '*');
+
+      // Filter out the keys that match the pattern to keep
+      const keysToDelete = keys.filter(key => !key.includes(pattern));
+
+      // Delete the remaining keys
+      if (keysToDelete.length > 0) {
+        await client.del(...keysToDelete);
+      }
+
+      // Update the cursor for the next iteration
+      cursor = nextCursor;
+    } while (cursor !== '0');
+
+    console.log('Keys deleted successfully.');
   } catch (error) {
     console.error('Error while clearing cache', error);
   }

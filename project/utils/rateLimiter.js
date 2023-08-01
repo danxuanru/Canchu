@@ -2,16 +2,11 @@
 // const rateLimit = require('express-rate-limit');
 const Redis = require('ioredis');
 const { clearCache } = require('./cache');
-const { getUserId } = require('./utils');
-const { authenticateToken } = require('./authorization');
 const client = new Redis(); // port 6379
 const limit = 3;
 
 async function rateLimiter (req, res, next) {
   try {
-    await authenticateToken();
-    const userId = await getUserId(res);
-
     // get ip from header
     const ip = req.headers['x-real-ip'] || req.headers['x-forward-for'] || req.connection.remoteAddress;
 
@@ -29,7 +24,6 @@ async function rateLimiter (req, res, next) {
         // add to blocklist
         client.set(blockKey, 1, 'EX', 10);
         client.del(ipKey); // delete ipKey
-        clearCache(userId); // clear user profile cache
 
         return res.status(429).json({ error: `${ipKey} request too much!!` });
       }
