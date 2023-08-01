@@ -12,17 +12,23 @@ async function rateLimiter (req, res) {
     // get ip count & remain ttl
     const ipKey = `rateLimiter:ip#${ip}`;
     console.log(ipKey);
-    const requestCount = parseInt(await client.get(ipKey));
-    // const ttl = await client.ttl(ipKey);
-    if (requestCount) {
+    const blockKey = `rateLimiter:block#${ip}`;
+    const blockRequest = await client.get(blockKey);
+    let requestCount = await client.get(ipKey);
+
+    if (!blockRequest && requestCount) {
+      requestCount = parseInt(requestCount);
       if (requestCount >= limit) {
-        // add blacklist
-        window.alert('請求過多了 請稍後再試!');
-        return res.status(429).json('請求過多了 請稍後再試!');
+        // add to blocklist
+        alert('請求過多了 請稍後再試!');
+        client.set(blockKey, 1, 'EX', 10);
+        return res.status(429).json({ error: `${ipKey} request too much!!` });
       }
       console.log(`第${requestCount + 1}訪問 / s`);
       // await client.setex(ipKey, 1, parseInt(requestCount) + 1);
       await client.incr(ipKey);
+    } else if (blockRequest) {
+      return res.status(429).json({ error: 'try later!!' })
     } else { // no request in this second
       await client.set(ipKey, 1, 'EX', 1);
     }
