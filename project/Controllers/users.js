@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('../database');
 // const { cacheUserProfileData, clearCache } = require('../cache');
+const { cacheUserProfileData } = require('../utils/redis');
 const { getFriendship } = require('../Model/friendModel');
 const { getProfileData } = require('../Model/profileModel');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
@@ -163,7 +164,8 @@ async function getProfile (req, res) {
   // find data based on id & email
   try {
     console.log('get user: ' + targetUserId + ' profile');
-    const user = await getProfileData(userId, targetUserId);
+    // const user = await getProfileData(userId, targetUserId);
+    const user = await cacheUserProfileData(userId, targetUserId);
 
     // const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?';
     // const results = await pool.query(query, [targetUserId]);
