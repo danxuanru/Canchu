@@ -3,6 +3,8 @@ const { createClient } = require('redis');
 const { getProfileData } = require('../Model/profileModel')
 const client = createClient();
 
+client.on('error', err => console.log('Redis Client Error', err));
+
 // set cache data
 async function setCache (cacheKey, cacheData) {
   await client.connect();
@@ -29,7 +31,8 @@ async function cacheUserProfileData (userId, visterId) {
   try {
     await client.connect();
     console.log(visterId + ' get ' + userId + ' profile cache data');
-    const cachedData = await client.get(userId);
+    const cachedData = await client.exists(userId);
+    console.log('cachedData: ' + cachedData);
 
     if (cachedData) {
       console.log('data found in cache');
