@@ -7,8 +7,8 @@ const limit = 10;
 async function rateLimiter (req, res) {
   try {
     // get ip from header
-    console.log(req.ip + ' / ' + req.headers['x-forward-for'] + ' / ');
-    const ip = req.headers['x-forward-for'] || req
+    console.log(req.connection.remoteAddress + ' / ' + req.headers['x-forward-for'] + ' / ' + req.headers['x-real-ip']);
+    const ip = req.headers['x-real-ip'] || req.headers['x-forward-for'] || req.connection.remoteAddress;
     // get ip count & remain ttl
     const ipKey = `rateLimiter:ip#${ip}`;
     console.log(ipKey);
