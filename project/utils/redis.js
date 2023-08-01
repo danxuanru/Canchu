@@ -31,7 +31,7 @@ async function cacheUserProfileData (userId, visterId) {
   try {
     await client.connect();
     console.log(visterId + ' get ' + userId + ' profile cache data');
-    const cachedData = await client.exists(userId);
+    const cachedData = await client.get(userId);
     console.log('cachedData: ' + cachedData);
 
     if (cachedData) {
