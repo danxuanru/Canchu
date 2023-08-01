@@ -10,11 +10,19 @@ const client = new Redis(); // port 6379
 const limit = 3;
 
 async function rateLimiter (req, res, next) {
-  const token = req.headers.authorization;
-
   // Verify the token and extract user information (userId)
-  const decodedToken = jwt.verify(token, secretKey);
-  const userId = decodedToken.id;
+  const token = req.headers.authorization;
+  try {
+    // Verify the token and extract user information (userId)
+    const decodedToken = jwt.verify(token, secretKey);
+    console.log('Decoded token:', decodedToken);
+    const userId = decodedToken.id;
+    console.log('User ID:', userId);
+    // ... Rest of the rate limiter logic ...
+  } catch (error) {
+    console.error('Error while verifying token:', error);
+    return res.status(401).json({ error: 'Invalid token' });
+  }
 
   try {
     // get ip from header
