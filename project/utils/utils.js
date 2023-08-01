@@ -1,5 +1,6 @@
 /* eslint-disable semi */
 const jwt = require('jsonwebtoken');
+const { authenticateToken } = require('./authorization');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
 function getDateFormat () {
@@ -15,7 +16,8 @@ function getDateFormat () {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-function getUserId (res) {
+async function getUserId (res) {
+  if (!res) { await authenticateToken(); }
   const token = res.locals.token;
   const user = jwt.verify(token, secretKey);
   return user.id;
