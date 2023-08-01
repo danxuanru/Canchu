@@ -1,10 +1,8 @@
 /* eslint-disable semi */
 // const rateLimit = require('express-rate-limit');
 const Redis = require('ioredis');
-const jwt = require('jsonwebtoken');
-const { clearCache } = require('./cache');
+const { deleteCertainCache } = require('./cache');
 // const { getUserId } = require('./utils');
-const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
 const client = new Redis(); // port 6379
 const limit = 3;
@@ -46,7 +44,7 @@ async function rateLimiter (req, res, next) {
         // const userId = getUserId();
         // console.log(userId);
         // await clearCache(userId);
-
+        await deleteCertainCache('users:profile');
         // window.alert('request too much, please try later!!');
 
         return res.status(429).json({ error: `${ipKey} request too much!!` });
