@@ -47,7 +47,7 @@ async function rateLimiter (req, res, next) {
         // console.log(userId);
         // await clearCache(userId);
 
-        window.alert('request too much, please try later!!');
+        // window.alert('request too much, please try later!!');
 
         return res.status(429).json({ error: `${ipKey} request too much!!` });
       }
