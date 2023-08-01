@@ -21,6 +21,7 @@ async function rateLimiter (req, res, next) {
       if (requestCount >= limit) {
         // add to blocklist
         client.set(blockKey, 1, 'EX', 10);
+        client.del(ipKey); // delete ipKey
         return res.status(429).json({ error: `${ipKey} request too much!!` });
       }
       console.log(`第${requestCount + 1}訪問 / s`);
