@@ -1,17 +1,13 @@
 /* eslint-disable camelcase */
 /* eslint-disable semi */
 require('dotenv').config();
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const multer = require('multer');
 const pool = require('../database');
-const { authenticateToken } = require('../authorization.js');
-const { cacheUserProfileData, clearCache } = require('../cache');
+// const { cacheUserProfileData, clearCache } = require('../cache');
 const { getFriendship } = require('../Model/friendModel');
+const { getProfileData } = require('../Model/profileModel');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
-
-const router = express.Router();
 
 function validateEmail (email) {
   // regular expression:
@@ -167,7 +163,7 @@ async function getProfile (req, res) {
   // find data based on id & email
   try {
     console.log('get user: ' + targetUserId + ' profile');
-    const user = await cacheUserProfileData(userId, targetUserId);
+    const user = await getProfileData(userId, targetUserId);
 
     // const query = 'SELECT id, name, picture, introduction, tags, friend_count FROM users WHERE id = ?';
     // const results = await pool.query(query, [targetUserId]);
@@ -201,19 +197,6 @@ async function getProfile (req, res) {
   }
 };
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'images');
-  },
-  filename: (req, file, cb) => {
-    // const name = path.extname(file.originalname);
-    // cb(null, `${name}`);
-    cb(null, `${file.fieldname}-${Date.now()}`);
-  }
-});
-
-const upload = multer({ storage }); // create a instance
-
 /* picture update */
 async function updatePicture (req, res) {
   if (!req.file) {
@@ -233,8 +216,8 @@ async function updatePicture (req, res) {
     await pool.query('UPDATE users SET picture = ? WHERE id = ?', [imgURL, userId]);
     console.log('URL:' + imgURL);
 
-    // update - clear cache
-    await clearCache(userId);
+    // // update - clear cache
+    // await clearCache(userId);
 
     return res.json({ data: { picture: imgURL } });
   } catch (error) {
@@ -266,8 +249,8 @@ async function updateProfile (req, res) {
     await pool.query('UPDATE users SET name = ?, introduction = ?, tags = ? WHERE id = ?',
       [name, introduction, tags, userId]);
 
-    // update - clear cache
-    await clearCache(userId);
+    // // update - clear cache
+    // await clearCache(userId);
 
     return res.json({ data: { user: { id: userId } } });
   } catch (error) {
@@ -315,11 +298,11 @@ async function userSearch (req, res) {
   return res.json({ data: { users } });
 }
 
-router.post('/signup', signUp);
-router.post('/signin', signIn);
-router.get('/:id/profile', authenticateToken, getProfile);
-router.put('/profile', authenticateToken, updateProfile);
-router.put('/picture', authenticateToken, upload.single('picture'), updatePicture);
-router.get('/search', authenticateToken, userSearch);
-
-module.exports = router;
+module.exports = {
+  signIn,
+  signUp,
+  getProfile,
+  updatePicture,
+  updateProfile,
+  userSearch
+};

@@ -1,4 +1,7 @@
 /* eslint-disable semi */
+const jwt = require('jsonwebtoken');
+const secretKey = `${process.env.JWT_SECRET_KEY}`;
+
 function getDateFormat () {
   const date = new Date();
   const year = String(date.getFullYear());
@@ -12,4 +15,10 @@ function getDateFormat () {
   return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
 }
 
-module.exports = { getDateFormat };
+function getUserId (res) {
+  const token = res.locals.token;
+  const user = jwt.verify(token, secretKey);
+  return user.id;
+}
+
+module.exports = { getDateFormat, getUserId };

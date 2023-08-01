@@ -45,10 +45,10 @@ app.use(express.json());
 app.use('/images', express.static(`${__dirname}/images`));
 
 // use router
-const usersRouter = require('./Router/users.js');
-const friendsRouter = require('./Router/friends.js');
-const eventsRouter = require('./Router/events.js');
-const postsRouter = require('./Router/posts.js');
+const usersRouter = require('./Router/users_router');
+const friendsRouter = require('./Router/friends_router');
+const eventsRouter = require('./Router/events_router');
+const postsRouter = require('./Router/posts_router');
 
 app.use('/api/1.0/users', usersRouter);
 app.use('/api/1.0/friends', friendsRouter);

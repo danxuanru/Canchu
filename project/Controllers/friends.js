@@ -1,18 +1,14 @@
 /* eslint-disable semi */
 /* eslint-disable camelcase */
 require('dotenv').config();
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const pool = require('../database.js');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
-const { authenticateToken } = require('../authorization.js');
 const { updateFriendCount } = require('../Model/friendModel.js');
 const { addNewEvent } = require('../Model/eventModel.js');
 const { getUserSearchObj } = require('../Model/searchModel.js');
-const { clearCache } = require('../cache.js');
-
-const router = express.Router();
+// const { clearCache } = require('../cache.js');
 
 async function requestFriend (req, res) {
   const inviteeId = +req.params.user_id; // get parameters: use '+' replace parseInt
@@ -41,8 +37,8 @@ async function requestFriend (req, res) {
     // add event (select user profile + insert into events)
     await addNewEvent('friend_request', userId, inviteeId);
 
-    // update - clear cache
-    await clearCache(userId);
+    // // update - clear cache
+    // await clearCache(userId);
 
     const friendshipData = {
       id: friendship_id
@@ -119,8 +115,8 @@ async function agreeFriend (req, res) {
   await pool.query(update, ['friend', friendship_id]);
   await updateFriendCount(user1_id, user2_id, 'agree');
 
-  // update - clear cache
-  await clearCache(userId);
+  // // update - clear cache
+  // await clearCache(userId);
 
   // add new event
   await addNewEvent('agree_request', user2_id, user1_id);
@@ -153,8 +149,8 @@ async function deleteFriend (req, res) {
   await pool.query(deleteFriendship, [friendship_id]);
   await updateFriendCount(user1_id, user2_id, 'delete');
 
-  // update - clear cache
-  await clearCache(userId);
+  // // update - clear cache
+  // await clearCache(userId);
 
   // add new event
   const user_id = userId === user1_id ? user1_id : user2_id;
@@ -179,10 +175,10 @@ async function getFriends (req, res) {
   return res.json({ data: { users } });
 }
 
-router.post('/:user_id/request', authenticateToken, requestFriend);
-router.get('/pending', authenticateToken, getPendingFriends);
-router.post('/:friendship_id/agree', authenticateToken, agreeFriend);
-router.delete('/:friendship_id', authenticateToken, deleteFriend);
-router.get('/', authenticateToken, getFriends);
-
-module.exports = router;
+module.exports = {
+  requestFriend,
+  getPendingFriends,
+  agreeFriend,
+  deleteFriend,
+  getFriends
+}

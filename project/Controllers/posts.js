@@ -1,16 +1,12 @@
 /* eslint-disable semi */
 /* eslint-disable camelcase */
 require('dotenv').config();
-const express = require('express');
 const jwt = require('jsonwebtoken');
 const pool = require('../database');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
-const getDateFormat = require('../utils');
-const { authenticateToken } = require('../authorization');
+const { getDateFormat } = require('../utils/utils');
 const { getFriendsId } = require('../Model/friendModel.js');
 const { getPost, getLikeOrNot } = require('../Model/postModel.js')
-
-const router = express.Router();
 
 /* create post */
 async function createPost (req, res) {
@@ -311,12 +307,12 @@ async function postSearch (req, res) {
   }
 }
 
-router.post('/', authenticateToken, createPost);
-router.put('/:id', authenticateToken, updatePost);
-router.post('/:id/like', authenticateToken, createPostLike);
-router.delete('/:id/like', authenticateToken, deletePostLike);
-router.post('/:id/comment', authenticateToken, createPostComment);
-router.get('/:id', authenticateToken, getPostDetail);
-router.get('/search', authenticateToken, postSearch);
-
-module.exports = router;
+module.exports = {
+  createPost,
+  updatePost,
+  getPostDetail,
+  createPostLike,
+  deletePostLike,
+  createPostComment,
+  postSearch
+};
