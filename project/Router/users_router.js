@@ -2,7 +2,7 @@
 const express = require('express');
 const multer = require('multer');
 const { authenticateToken } = require('../utils/authorization');
-const { signIn, signUp, getProfile, updatePicture, updateProfile, userSearch } = require('../controllers/users');
+const { signIn, signUp, getProfile, updatePicture, updateProfile, userSearch } = require('../Controllers/users');
 const router = express.Router();
 
 const storage = multer.diskStorage({
