@@ -23,8 +23,6 @@ const corsOption = {
 app.use(cors());
 app.use(express.json());
 
-const { rateLimiter } = require('./utils/rateLimiter');
-app.use(rateLimiter);
 // app.set('trust proxy', true);
 // app.use(limiter);
 
@@ -54,6 +52,9 @@ app.use('/api/1.0/users', usersRouter);
 app.use('/api/1.0/friends', friendsRouter);
 app.use('/api/1.0/events', eventsRouter);
 app.use('/api/1.0/posts', postsRouter);
+
+const { rateLimiter } = require('./utils/rateLimiter');
+app.use(rateLimiter);
 
 // app.post('/api/1.0/users/signup', signUp);
 // app.post('/api/1.0/users/signin', signIn);

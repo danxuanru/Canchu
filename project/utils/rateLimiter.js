@@ -20,9 +20,10 @@ async function rateLimiter (req, res) {
         return res.status(429).json('請求過多了 請稍後再試!');
       }
       console.log(`第${parseInt(requestCount) + 1}訪問 / s`);
-      await client.setex(ipKey, 1, parseInt(requestCount) + 1);
+      // await client.setex(ipKey, 1, parseInt(requestCount) + 1);
+      await client.incr(ipKey);
     } else { // no request in this second
-      await client.setex(ipKey, 1, 1);
+      await client.set(ipKey, 1, 'EX', 1);
     }
   } catch (error) {
     console.error(error);
