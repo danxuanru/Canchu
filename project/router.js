@@ -13,8 +13,6 @@ const cors = require('cors');
 // const { userSearch, postSearch } = require('./search.js');
 // const { createPost, updatePost, createPostLike, deletePostLike, createPostComment, getPostDetail } = require('./post.js');
 
-// const { limiter } = require('./rateLimiter.js');
-
 const app = express();
 
 const corsOption = {
@@ -25,6 +23,8 @@ const corsOption = {
 app.use(cors());
 app.use(express.json());
 
+const { rateLimiter } = require('./utils/rateLimiter');
+app.use(rateLimiter);
 // app.set('trust proxy', true);
 // app.use(limiter);
 

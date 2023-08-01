@@ -10,7 +10,7 @@ app.use(express.json());
 // 獲取兩者間的關係
 async function getFriendship (user_id, friend_id, type) {
   // if (type === undefined) type = 'NULL';
-  console.log('type:' + type);
+  // console.log('type:' + type);
   const query = `SELECT id, CASE WHEN status = 'pending' THEN 'requested' ELSE status END AS status
                   FROM friendship WHERE user1_id = ? AND user2_id in (?) AND (status = ? OR ? IS NULL)
                   UNION 
@@ -20,13 +20,13 @@ async function getFriendship (user_id, friend_id, type) {
   const value = [user_id, friend_id, type, type, friend_id, user_id, type, type];
   try {
     const results = await pool.query(query, value);
-    console.log('friendship: ' + results[0])
+    // console.log('friendship: ' + results[0])
     if (results[0].length === 0) { return null; }
     const { id, status } = results[0][0];
     console.log('get friendship:' + { id, status });
     return { id, status };
   } catch (error) {
-    console.log('SELECT error: ', error);
+    console.error('SELECT error: ', error);
     throw new Error('Server Error');
   }
 }
