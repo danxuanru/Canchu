@@ -1,12 +1,21 @@
 /* eslint-disable semi */
 // const rateLimit = require('express-rate-limit');
 const Redis = require('ioredis');
+const jwt = require('jsonwebtoken');
 const { clearCache } = require('./cache');
-const { getUserId } = require('./utils');
+// const { getUserId } = require('./utils');
+const secretKey = `${process.env.JWT_SECRET_KEY}`;
+
 const client = new Redis(); // port 6379
 const limit = 3;
 
 async function rateLimiter (req, res, next) {
+  const token = req.headers.authorization;
+
+  // Verify the token and extract user information (userId)
+  const decodedToken = jwt.verify(token, secretKey);
+  const userId = decodedToken.id;
+
   try {
     // get ip from header
     const ip = req.headers['x-real-ip'] || req.headers['x-forward-for'] || req.connection.remoteAddress;
@@ -26,7 +35,7 @@ async function rateLimiter (req, res, next) {
         client.set(blockKey, 1, 'EX', 10);
         client.del(ipKey); // delete ipKey
 
-        const userId = getUserId();
+        // const userId = getUserId();
         console.log(userId);
         await clearCache(userId);
 
