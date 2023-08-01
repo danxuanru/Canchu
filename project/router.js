@@ -23,9 +23,6 @@ const corsOption = {
 app.use(cors());
 app.use(express.json());
 
-const { rateLimiter } = require('./utils/rateLimiter');
-app.use(rateLimiter);
-
 // app.set('trust proxy', true);
 // app.use(limiter);
 
@@ -44,6 +41,9 @@ app.use(rateLimiter);
 // const upload = multer({ storage }); // create a instance
 
 app.use('/images', express.static(`${__dirname}/images`));
+
+const { rateLimiter } = require('./utils/rateLimiter');
+app.use(rateLimiter);
 
 // use router
 const usersRouter = require('./Router/users_router');

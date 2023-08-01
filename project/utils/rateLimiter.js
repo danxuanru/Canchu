@@ -17,6 +17,7 @@ async function rateLimiter (req, res) {
     if (requestCount) {
       if (requestCount >= limit) {
         // add blacklist
+        window.alert('請求過多了 請稍後再試!');
         return res.status(429).json('請求過多了 請稍後再試!');
       }
       console.log(`第${requestCount + 1}訪問 / s`);
