@@ -22,7 +22,7 @@ async function rateLimiter (req, res) {
       console.log(`第${parseInt(requestCount) + 1}訪問 / s`);
       await client.setex(ipKey, ttl, parseInt(requestCount) + 1);
     } else { // no request in this second
-      await client.set(ipKey, 1, 'EX', 1);
+      await client.setex(ipKey, 1, 1);
     }
   } catch (error) {
     console.error(error);
