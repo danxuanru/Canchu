@@ -1,6 +1,7 @@
+/* eslint-disable semi */
 require('dotenv').config();
 const express = require('express');
-// const Redis = require('ioredis');
+const Redis = require('ioredis');
 const client = new Redis(); // port 6379
 const { getProfileData } = require('../Model/profileModel');
 
@@ -8,7 +9,6 @@ const app = express();
 app.use(express.json());
 
 const cacheUserProfileData = async (visterId, userId) => {
-
   try {
     // check cache 是否已經有 user 的 profile data
     console.log(visterId + ' get ' + userId + ' profile cache data');
@@ -43,7 +43,6 @@ const clearCache = async (userId) => {
     // delete user data in cache
     await client.del(userId);
     console.log('Cache cleared for user: ', userId);
-
   } catch (error) {
     console.error('Error while clearing cache', error);
   }

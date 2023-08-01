@@ -4,10 +4,10 @@ require('dotenv').config();
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const pool = require('../database');
-// const { cacheUserProfileData, clearCache } = require('../cache');
-const { cacheUserProfileData } = require('../utils/redis');
+const { cacheUserProfileData, clearCache } = require('../utils/cache');
+// const { cacheUserProfileData } = require('../utils/redis');
 const { getFriendship } = require('../Model/friendModel');
-const { getProfileData } = require('../Model/profileModel');
+// const { getProfileData } = require('../Model/profileModel');
 const secretKey = `${process.env.JWT_SECRET_KEY}`;
 
 function validateEmail (email) {
@@ -219,7 +219,7 @@ async function updatePicture (req, res) {
     console.log('URL:' + imgURL);
 
     // // update - clear cache
-    // await clearCache(userId);
+    await clearCache(userId);
 
     return res.json({ data: { picture: imgURL } });
   } catch (error) {
@@ -252,7 +252,7 @@ async function updateProfile (req, res) {
       [name, introduction, tags, userId]);
 
     // // update - clear cache
-    // await clearCache(userId);
+    await clearCache(userId);
 
     return res.json({ data: { user: { id: userId } } });
   } catch (error) {
