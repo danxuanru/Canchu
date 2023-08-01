@@ -7,20 +7,20 @@ const limit = 10;
 async function rateLimiter (req, res) {
   try {
     // get ip from header
-    console.log(req.connection.remoteAddress + ' / ' + req.headers['x-forward-for'] + ' / ' + req.headers['x-real-ip']);
+    // console.log(req.connection.remoteAddress + ' / ' + req.headers['x-forward-for'] + ' / ' + req.headers['x-real-ip']);
     const ip = req.headers['x-real-ip'] || req.headers['x-forward-for'] || req.connection.remoteAddress;
     // get ip count & remain ttl
     const ipKey = `rateLimiter:ip#${ip}`;
     console.log(ipKey);
     const requestCount = await client.get(ipKey);
-    const ttl = await client.ttl(ipKey)
+    // const ttl = await client.ttl(ipKey);
     if (requestCount) {
       if (requestCount >= limit) {
         // add blacklist
         return res.status(429).json('請求過多了 請稍後再試!');
       }
       console.log(`第${parseInt(requestCount) + 1}訪問 / s`);
-      await client.setex(ipKey, ttl, parseInt(requestCount) + 1);
+      await client.setex(ipKey, 1, parseInt(requestCount) + 1);
     } else { // no request in this second
       await client.setex(ipKey, 1, 1);
     }
