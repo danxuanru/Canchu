@@ -10,19 +10,19 @@ const client = new Redis(); // port 6379
 const limit = 3;
 
 async function rateLimiter (req, res, next) {
-  // Verify the token and extract user information (userId)
-  const token = req.headers.authorization;
-  try {
-    // Verify the token and extract user information (userId)
-    const decodedToken = jwt.verify(token, secretKey);
-    console.log('Decoded token:', decodedToken);
-    const userId = decodedToken.id;
-    console.log('User ID:', userId);
-    // ... Rest of the rate limiter logic ...
-  } catch (error) {
-    console.error('Error while verifying token:', error);
-    return res.status(401).json({ error: 'Invalid token' });
-  }
+  // // Verify the token and extract user information (userId)
+  // const token = req.headers.authorization;
+  // try {
+  //   // Verify the token and extract user information (userId)
+  //   const decodedToken = jwt.verify(token, secretKey);
+  //   console.log('Decoded token:', decodedToken);
+  //   const userId = decodedToken.id;
+  //   console.log('User ID:', userId);
+  //   // ... Rest of the rate limiter logic ...
+  // } catch (error) {
+  //   console.error('Error while verifying token:', error);
+  //   return res.status(401).json({ error: 'Invalid token' });
+  // }
 
   try {
     // get ip from header
@@ -44,8 +44,8 @@ async function rateLimiter (req, res, next) {
         client.del(ipKey); // delete ipKey
 
         // const userId = getUserId();
-        console.log(userId);
-        await clearCache(userId);
+        // console.log(userId);
+        // await clearCache(userId);
 
         window.alert('request too much, please try later!!');
 
