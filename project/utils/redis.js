@@ -27,6 +27,7 @@ async function getCache (cacheKey) {
 // get user profile data
 async function cacheUserProfileData (userId, visterId) {
   try {
+    await client.connect();
     console.log(visterId + ' get ' + userId + ' profile cache data');
     const cachedData = await client.get(userId);
 
