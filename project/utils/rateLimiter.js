@@ -3,12 +3,14 @@
 const Redis = require('ioredis');
 const { clearCache } = require('./cache');
 const { getUserId } = require('./utils');
+const { authenticateToken } = require('./authorization');
 const client = new Redis(); // port 6379
 const limit = 3;
 
 async function rateLimiter (req, res, next) {
   try {
-    const userId = getUserId();
+    await authenticateToken();
+    const userId = await getUserId(res);
 
     // get ip from header
     const ip = req.headers['x-real-ip'] || req.headers['x-forward-for'] || req.connection.remoteAddress;
