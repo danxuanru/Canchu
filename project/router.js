@@ -53,7 +53,7 @@ const postsRouter = require('./Router/posts_router');
 app.use('/api/1.0/users', usersRouter);
 app.use('/api/1.0/friends', friendsRouter);
 app.use('/api/1.0/events', eventsRouter);
-app.use('/api/1.0', postsRouter);
+app.use('/api/1.0/posts', postsRouter);
 
 // app.post('/api/1.0/users/signup', signUp);
 // app.post('/api/1.0/users/signin', signIn);
