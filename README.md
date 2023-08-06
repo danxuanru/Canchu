@@ -1,4 +1,5 @@
-# build Profile API
+---
+## build Profile API
 
 ### 功能
 * ### **multer**
@@ -24,17 +25,17 @@ request: img file & header
 
     
 
-## Practice
+### Practice
 * add TABLE column
     ```sql
     ALTER TABLE users 
     ADD introduction TEXT,
     ADD tags VARCHAR(50);
-    ADD friend_count INT,
-    ADD friendship JSON;
-
+    ADD friend_count INT
     ```
 
 * upload an image file to EC2
+
+---
 
 
