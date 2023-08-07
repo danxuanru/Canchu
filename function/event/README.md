@@ -13,7 +13,6 @@
         FOREIGN KEY (user_id) REFERENCES users(id)
     )
     ```
-    mysql中 boolean型態由BIT表示
 
 * **add new events**
     * read event
