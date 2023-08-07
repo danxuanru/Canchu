@@ -4,14 +4,14 @@ on:
   push:
     branches:
       - develop
-
+      
 jobs:
   test_runner:
     runs-on: self-hosted
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Print message
         run: echo "Hello, GitHub Action!"
