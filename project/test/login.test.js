@@ -88,6 +88,94 @@ describe('POST /api/1.0/users/signup', () => {
   });
 });
 
+// signin ==========================================================
+
+// [valid] success signin - retunrn token + user:{id, provider, name, email, picture} & status(200)
+describe('POST /api/1.0/users/signin', () => {
+  test('sign-in success - return user data', async () => {
+    const userData = {
+      provider: 'native',
+      email: 'test@test.com',
+      password: 'test'
+    };
+    const response = await request(app)
+      .post('/api/1.0/users/signin')
+      .send(userData);
+
+    expect(response.body).toHaveProperty('data');
+    expect(response.body.data).toHaveProperty('access_token');
+    expect(response.body.data).toHaveProperty('user');
+    expect(response.body.data.user.provider).toBe(userData.provider);
+    expect(response.body.data.user.email).toBe(userData.email);
+    // id, name正確性???
+    expect(response.statusCode).toBe(200);
+    // token正確性???
+  });
+});
+
+// [valid] data missing - return status(400)
+describe('POST /api/1.0/users/signin', () => {
+  test('data missing - return status code 400', async () => {
+    const userData = {
+      provider: 'native',
+      email: 'test@test.com'
+    };
+    const response = await request(app)
+      .post('/api/1.0/users/signin')
+      .send(userData);
+
+    expect(response.statusCode).toBe(400);
+  });
+});
+
+// [valid] wrong password - return status(403)
+describe('POST /api/1.0/users/signin', () => {
+  test('wrong password - return status code 403', async () => {
+    const userData = {
+      provider: 'native',
+      email: 'test@test.com',
+      password: 'test00'
+    };
+    const response = await request(app)
+      .post('/api/1.0/users/signin')
+      .send(userData);
+
+    expect(response.statusCode).toBe(403);
+  });
+});
+
+// [valid] wrong provider - return status(403)
+describe('POST /api/1.0/users/signin', () => {
+  test('wrong provider - return status code 403', async () => {
+    const userData = {
+      provider: 'facebook',
+      email: 'test@test.com',
+      password: 'test'
+    };
+    const response = await request(app)
+      .post('/api/1.0/users/signin')
+      .send(userData);
+
+    expect(response.statusCode).toBe(403);
+  });
+});
+
+// [valid] user not found - return status(403)
+describe('POST /api/1.0/users/signin', () => {
+  test('user not found - return status code 403', async () => {
+    const userData = {
+      provider: 'native',
+      email: 'testtest@test.com',
+      password: 'test'
+    };
+    const response = await request(app)
+      .post('/api/1.0/users/signin')
+      .send(userData);
+
+    expect(response.statusCode).toBe(403);
+  });
+});
+
 // afterAll - close connection & delete all data in table
 afterAll( (done) => {
   app.listen(80).close(done);

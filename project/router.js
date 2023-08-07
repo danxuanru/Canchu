@@ -32,7 +32,7 @@ app.use(express.json());
 
 // app.set('trust proxy', true);
 // app.use(limiter);
-app.use(rateLimiter);
+// app.use(rateLimiter);
 
 // use router
 app.use('/api/1.0/users', usersRouter);

@@ -5,7 +5,7 @@ const { deleteCertainCache } = require('./cache');
 // const { getUserId } = require('./utils');
 
 const client = new Redis(); // port 6379
-const limit = 3;
+const limit = 10;
 
 async function rateLimiter (req, res, next) {
   // // Verify the token and extract user information (userId)

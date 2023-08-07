@@ -110,7 +110,7 @@ async function signIn (req, res) {
 
       const results = await pool.query('SELECT * FROM users WHERE email = ?', email);
 
-      if (results.length === 0) { return res.status(403).json({ error: 'Email Does Not Found!' }); }
+      if (results[0].length === 0) { return res.status(403).json({ error: 'Email Does Not Found!' }); }
 
       // password authentication
       const userData = results[0][0];
