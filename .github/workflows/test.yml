@@ -68,7 +68,7 @@ jobs:
             fi
 
             cd github/Canchu/project
-            git pull origin deevelop
+            git pull origin develop
             echo "${{ secrets.ENV_FILE  }}" > .env 
             if [ ! -d "private" ]; then
               echo "Creating 'private' directory..."
