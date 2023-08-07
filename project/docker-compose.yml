@@ -1,0 +1,62 @@
+version: "3.9"
+
+services:
+
+  canchu:
+    container_name: canchu_server
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sh -c "while ! nc -z canchu_mysql 3306; do sleep 1; done && node server.js"
+    environment:
+      NODE_ENV: production
+    ports:
+      - "5000:5000"
+    env_file:
+      - .env
+    networks:
+      - canchu_network
+    depends_on: #等待container建立好再執行
+      - canchu_mysql
+      - canchu_redis
+
+  canchu_mysql:
+    container_name: canchu_mysql
+    image: mysql
+    restart: always #有問題時重啟
+    networks:
+      - canchu_network
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PWD}
+      MYSQL_DATABASE: ${DB}
+    volumes:
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+
+  nginx:
+    container_name: canchu_nginx
+    image: nginx
+    restart: always
+    ports:
+      - "80:80"
+      - "433:433"
+    volumes: # volume將本機文件掛載到容器中的路徑 本機文件:容器中nginx配置路徑
+      - ./nginx.conf:/etc/nginx/nginx.conf
+      - ./private/certificate.crt:/etc/nginx/certificate.crt:ro
+      - ./private/private.key:/etc/nginx/private.key:ro
+    networks:
+      - canchu_network
+    depends_on:
+      - canchu_server
+  
+  canchu_redis:
+    container_name: canchu_redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - canchu_network
+  
+# 定義容器間的網路設定
+networks: 
+  canchu_network:
+    driver: bridge # bridge驅動程式: container間建立linux bridge layer, 並分配ip位址

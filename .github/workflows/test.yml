@@ -69,12 +69,12 @@ jobs:
 
             cd github/Canchu/project
             git pull origin develop
-            echo "${{ secrets.ENV_FILE  }}" > .env 
             if [ ! -d "private" ]; then
               echo "Creating 'private' directory..."
               mkdir private
             fi
-
+            
+            echo "${{ secrets.ENV_FILE  }}" > .env 
             echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
             echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
             docker-compose down 
