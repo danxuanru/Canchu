@@ -24,7 +24,7 @@ jobs:
             echo "Docker is already installed."
           fi
 
-          cd student/hsuan-ju/Canchu
+          cd project
           if [ ! -d "private" ]; then
             echo "Creating 'private' directory..."
             mkdir private
@@ -101,9 +101,9 @@ jobs:
               mkdir private
             fi
             
-            echo "${{ secrets.ENV_FILE  }}" > .env 
-            echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
-            echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
+            sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env'
+            sudo sh -c 'echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt'
+            sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
 
             docker-compose down 
             docker-compose --env-file .env.docker up --build -d
