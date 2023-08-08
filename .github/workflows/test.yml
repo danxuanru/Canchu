@@ -14,8 +14,33 @@ jobs:
       - name: Checkout code #clone repositories to runner
         uses: actions/checkout@v3
 
-      # - name: Run Test
-      #   run: |
+      - name: Build Docker Compose for Test
+        run: |
+          if ! [ -x "$(command -v docker)" ]; then
+            echo "Docker is not installed. Installing Docker..."
+            sudo apt-get update
+            sudo apt-get install -y docker.io
+          else
+            echo "Docker is already installed."
+          fi
+
+          cd student/hsuan-ju/Canchu
+          if [ ! -d "private" ]; then
+            echo "Creating 'private' directory..."
+            mkdir private
+          fi
+          
+          echo "${{ secrets.ENV_FILE  }}" > .env 
+          echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
+          echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
+
+          docker-compose --env-file .env.docker up --build -d
+
+      - name: Sleep 30 sec
+        run: sleep 30
+
+      - name: Run Test
+        run: docker exec canchu npm test -- --watch=false
 
       # - name: Login to Docker Hub
       #   uses: docker/login-action
