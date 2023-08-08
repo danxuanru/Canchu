@@ -8,7 +8,7 @@ on:
 
 jobs:
   docker_to_EC2:
-    runs-on: self-hosted
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code #clone repositories to runner
@@ -88,6 +88,8 @@ jobs:
               echo "Docker is not installed. Installing Docker..."
               sudo apt-get update
               sudo apt-get install -y docker.io
+              sudo systemctl start docker
+              sudo apt install docker-compose
             else
               echo "Docker is already installed."
             fi
