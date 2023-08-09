@@ -33,9 +33,9 @@ jobs:
             mkdir private
           fi
           
-          echo "${{ secrets.ENV_FILE  }}" > .env.docker
-          echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
-          echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
+          sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env'
+          sudo sh -c 'echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt'
+          sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
 
           docker-compose --env-file .env.docker up --build -d
 
@@ -104,7 +104,7 @@ jobs:
               mkdir private
             fi
             
-            sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env.docker'
+            sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env'
             sudo sh -c 'echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt'
             sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
 
@@ -118,5 +118,3 @@ jobs:
       #   run: |
       #     ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "docker pull ${{ secrets.DOCKERHUB_USERNAME }}/project"
       #     ssh ${{ secrets.EC2_USERNAME }}@${{ secrets.EC2_HOST }} "docker-compose --env-file .env up -d"
-        
-        
