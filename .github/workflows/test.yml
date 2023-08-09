@@ -17,8 +17,9 @@ jobs:
       - name: Build Docker Compose for Test
         run: |
           npm cache clean --force
-          rm -rf node_modules
-          sudo apt-get purge docker.io
+          npm install
+          sudo apt remove docker -y
+          sudo apt remove docker-compose -y
           if ! [ -x "$(command -v docker)" ]; then
             echo "Docker is not installed. Installing Docker..."
             sudo apt-get update
@@ -46,6 +47,7 @@ jobs:
 
       - name: Run Test
         run: |
+          docker exec canchu_server npm install
           docker exec canchu_server npm test -- --watch=false
           
 
