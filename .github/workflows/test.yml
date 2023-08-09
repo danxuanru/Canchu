@@ -16,10 +16,13 @@ jobs:
 
       - name: Build Docker Compose for Test
         run: |
+          sudo apt-get purge docker.io
           if ! [ -x "$(command -v docker)" ]; then
             echo "Docker is not installed. Installing Docker..."
             sudo apt-get update
             sudo apt-get install -y docker.io
+            sudo systemctl start docker
+            sudo apt install docker-compose -y
           else
             echo "Docker is already installed."
           fi
@@ -30,7 +33,7 @@ jobs:
             mkdir private
           fi
           
-          echo "${{ secrets.ENV_FILE  }}" > .env 
+          echo "${{ secrets.ENV_FILE  }}" > .env.docker
           echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
           echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
 
@@ -101,7 +104,7 @@ jobs:
               mkdir private
             fi
             
-            sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env'
+            sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env.docker'
             sudo sh -c 'echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt'
             sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
 

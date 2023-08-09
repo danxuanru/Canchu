@@ -2,7 +2,7 @@ version: "3.9"
 
 services:
 
-  canchu:
+  server:
     container_name: canchu_server
     build:
       context: .
@@ -17,10 +17,10 @@ services:
     networks:
       - canchu_network
     depends_on: #等待container建立好再執行
-      - canchu_mysql
-      - canchu_redis
+      - mysql
+      - redis
 
-  canchu_mysql:
+  mysql:
     container_name: canchu_mysql
     image: mysql
     restart: always #有問題時重啟
@@ -46,9 +46,9 @@ services:
     networks:
       - canchu_network
     depends_on:
-      - canchu_server
+      - server
   
-  canchu_redis:
+  redis:
     container_name: canchu_redis
     image: redis:latest
     ports:
