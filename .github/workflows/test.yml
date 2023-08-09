@@ -45,7 +45,6 @@ jobs:
 
       - name: Run Test
         run: |
-          docker exec -it canchu_server npm install
           docker exec canchu_server npm test -- --watch=false
           
 

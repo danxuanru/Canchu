@@ -7,7 +7,7 @@ WORKDIR /canchu
 
 # 複製 package.json package-lock.json 安裝相依套件
 COPY package*.json ./
-RUN npm install --production
+RUN npm install
 
 COPY . .
 
@@ -15,6 +15,7 @@ EXPOSE 5000
 
 # install pm2
 #RUN npm install pm2 -g
+RUN npm install jest -g
 
 COPY .env ./
 # copy database script
