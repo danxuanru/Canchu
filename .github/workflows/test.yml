@@ -27,7 +27,6 @@ jobs:
             echo "Docker is already installed."
           fi
 
-          cd project
           if [ ! -d "private" ]; then
             echo "Creating 'private' directory..."
             mkdir private
@@ -100,7 +99,7 @@ jobs:
               echo "Docker is already installed."
             fi
 
-            cd github/Canchu/project
+            cd github/Canchu
             git pull origin develop
             if [ ! -d "private" ]; then
               echo "Creating 'private' directory..."
