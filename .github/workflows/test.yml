@@ -44,7 +44,10 @@ jobs:
         run: sleep 30
 
       - name: Run Test
-        run: docker exec canchu_server npm test -- --watch=false
+        run: |
+          docker exec -it canchu_server npm install
+          docker exec canchu_server npm test -- --watch=false
+          
 
       # - name: Login to Docker Hub
       #   uses: docker/login-action
@@ -110,7 +113,7 @@ jobs:
             sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
 
             sudo docker-compose down 
-            sudo docker-compose --env-file .env.docker up --build -d
+            sudo docker-compose --env-file .env up --build -d
             sudo docker image prune -af
           # docker-compose down -> 停止&清除docker comopose
           # docker image prune -af -> 刪除所有未使用的image 
