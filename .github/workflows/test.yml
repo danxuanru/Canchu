@@ -33,9 +33,10 @@ jobs:
             mkdir private
           fi
           
-          sudo sh -c 'echo "${{ secrets.ENV_FILE  }}" > .env'
-          sudo sh -c 'echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt'
-          sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
+          echo "${{ secrets.ENV_FILE  }}" > .env
+          echo "${{ secrets.ENV_DOCKER_FILE  }}" > .env.docker
+          echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
+          echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
 
           docker-compose --env-file .env.docker up --build -d
 
