@@ -7,7 +7,7 @@ WORKDIR /canchu
 
 # 複製 package.json package-lock.json 安裝相依套件
 COPY package*.json ./
-RUN npm install
+RUN npm install --prefer-offline
 
 COPY . .
 

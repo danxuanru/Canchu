@@ -16,6 +16,8 @@ jobs:
 
       - name: Build Docker Compose for Test
         run: |
+          npm cache clean --force
+          rm -rf node_modules
           sudo apt-get purge docker.io
           if ! [ -x "$(command -v docker)" ]; then
             echo "Docker is not installed. Installing Docker..."
@@ -36,7 +38,7 @@ jobs:
           echo "${{ secrets.ENV_DOCKER_FILE  }}" > .env.docker
           echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt
           echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key
-
+          
           docker-compose --env-file .env.docker up --build -d
 
       - name: Sleep 30 sec
@@ -110,7 +112,7 @@ jobs:
             sudo sh -c 'echo "${{ secrets.CERTIFICATE_CRT  }}" > private/certificate.crt'
             sudo sh -c 'echo "${{ secrets.PRIVATE_KEY  }}" > private/private.key'
 
-            sudo docker-compose down 
+            sudo docker-compose down --network canchu_network
             sudo docker-compose --env-file .env up --build -d
             sudo docker image prune -af
           # docker-compose down -> 停止&清除docker comopose
